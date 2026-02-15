@@ -1,45 +1,72 @@
 import { useState } from "react";
 
 function App() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const [message, setMessage] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async () => {
-    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name,
-        email: email,
-      }),
-    });
+    try {
+      const response = await fetch("http://localhost:3000/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    const data = await response.json();
-    console.log("Server response:", data);
-    alert("Data sent! Check console.");
+      const data = await response.json();
+      setMessage(data.message);
+    } catch (error) {
+      setMessage("Backend not connected yet");
+    }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Frontend → Backend Demo</h2>
+    <div style={{ padding: "30px", fontFamily: "Arial" }}>
+      <h2>Signup Page</h2>
 
       <input
+        type="text"
+        name="name"
         placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        value={formData.name}
+        onChange={handleChange}
       />
       <br /><br />
 
       <input
+        type="email"
+        name="email"
         placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        value={formData.email}
+        onChange={handleChange}
       />
       <br /><br />
 
-      <button onClick={handleSubmit}>Send Data</button>
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={handleChange}
+      />
+      <br /><br />
+
+      <button onClick={handleSubmit}>Signup</button>
+
+      <p>{message}</p>
     </div>
   );
 }
