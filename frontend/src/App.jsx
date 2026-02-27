@@ -1,24 +1,63 @@
 import { useState, useEffect } from "react";
-import "./index.css"; // we'll add some classes here
+import "./index.css";
 
 function App() {
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
   const [message, setMessage] = useState("");
   const [fade, setFade] = useState(false);
 
   useEffect(() => {
-    setFade(true); // triggers fade-in animation
+    setFade(true);
   }, []);
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = () => {
-    if (!formData.name || !formData.email.includes("@") || formData.password.length < 6) {
+  const handleSubmit = async () => {
+    // Basic validation
+    if (
+      !formData.name ||
+      !formData.email.includes("@") ||
+      formData.password.length < 6
+    ) {
       setMessage("Please fill all fields correctly!");
       return;
     }
+
     setMessage("Signing up...");
-    setTimeout(() => setMessage("Signup successful! ✅"), 1000);
+
+    try {
+      const response = await fetch("http://localhost:3000/api/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          pass: formData.password,
+          phone: "01700000000",
+          role: "PATIENT",
+        }),
+      });
+
+      const data = await response.json();
+      console.log("Server response:", data);
+
+      if (response.ok) {
+        setMessage("Signup successful! ✅");
+      } else {
+        setMessage(data.message || "Signup failed ❌");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setMessage("Server not working ❌");
+    }
   };
 
   return (
@@ -36,6 +75,7 @@ function App() {
           onChange={handleChange}
           className="input-field"
         />
+
         <input
           type="email"
           name="email"
@@ -44,6 +84,7 @@ function App() {
           onChange={handleChange}
           className="input-field"
         />
+
         <input
           type="password"
           name="password"
@@ -57,7 +98,11 @@ function App() {
           SIGN UP
         </button>
 
-        <p className={`message ${message.includes("successful") ? "success" : "error"}`}>
+        <p
+          className={`message ${
+            message.includes("successful") ? "success" : "error"
+          }`}
+        >
           {message}
         </p>
       </div>
