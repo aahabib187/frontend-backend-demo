@@ -6,6 +6,7 @@ function App() {
     name: "",
     email: "",
     password: "",
+    role: "", // <-- added role
   });
 
   const [message, setMessage] = useState("");
@@ -23,7 +24,9 @@ function App() {
     if (
       !formData.name ||
       !formData.email.includes("@") ||
-      formData.password.length < 6
+      !formData.password ||
+      formData.password.length < 6 ||
+      !formData.role // <-- validate role selection
     ) {
       setMessage("Please fill all fields correctly!");
       return;
@@ -42,7 +45,7 @@ function App() {
           email: formData.email,
           pass: formData.password,
           phone: "01700000000",
-          role: "PATIENT",
+          role: formData.role, // <-- send selected role
         }),
       });
 
@@ -93,6 +96,19 @@ function App() {
           onChange={handleChange}
           className="input-field"
         />
+
+        {/* NEW: Role Dropdown */}
+        <select
+          name="role"
+          value={formData.role}
+          onChange={handleChange}
+          className="input-field"
+        >
+          <option value="">Select Role</option>
+          <option value="PATIENT">Patient</option>
+          <option value="DOCTOR">Doctor</option>
+          <option value="ADMIN">Admin</option>
+        </select>
 
         <button className="submit-btn" onClick={handleSubmit}>
           SIGN UP
