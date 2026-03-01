@@ -56,4 +56,3 @@ exports.login = async (req, res) => {
     }
   }
 };
-// module.exports={login};
