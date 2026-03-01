@@ -7,19 +7,33 @@ export default function Login() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-
-    if (!storedUser) {
-      setMessage("No user found. Please signup first.");
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setMessage("Please enter email and password");
       return;
     }
 
-    if (storedUser.email === email && storedUser.password === password) {
-      localStorage.setItem("loggedInUser", JSON.stringify(storedUser));
+    try {
+      const res = await fetch("http://localhost:3000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, pass: password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.message || "Login failed");
+        return;
+      }
+
+      // Save logged-in user info for profile page
+      localStorage.setItem("loggedInUser", JSON.stringify(data.user));
       navigate("/profile");
-    } else {
-      setMessage("Invalid email or password");
+
+    } catch (err) {
+      console.error(err);
+      setMessage("Server error ❌");
     }
   };
 

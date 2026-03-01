@@ -1,42 +1,51 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-function Profile() {
+export default function Profile() {
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
     if (!loggedInUser) {
-      navigate("/login");
-    } else {
-      setUser(loggedInUser);
+      setMessage("No user logged in!");
+      return;
     }
+
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/api/profile/${loggedInUser.email}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          setMessage(data.message || "Failed to fetch profile");
+          return;
+        }
+
+        setUser(data);
+      } catch (err) {
+        console.error(err);
+        setMessage("Server error ❌");
+      }
+    };
+
+    fetchProfile();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("loggedInUser");
-    navigate("/login");
-  };
+  if (message) {
+    return <p style={{ textAlign: "center", marginTop: "50px" }}>{message}</p>;
+  }
 
-  if (!user) return null;
+  if (!user) {
+    return <p style={{ textAlign: "center", marginTop: "50px" }}>Loading profile...</p>;
+  }
 
   return (
-    <div className="container">
-      <div className="card">
-        <h2>PROFILE</h2>
-
-        <p><strong>Name:</strong> {user.name}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Role:</strong> {user.role}</p>
-
-        <button className="submit-btn" onClick={handleLogout}>
-          LOGOUT
-        </button>
-      </div>
+    <div style={{ padding: "50px", maxWidth: "400px", margin: "auto", border: "1px solid #ccc", borderRadius: "8px", textAlign: "center" }}>
+      <h1>Profile</h1>
+      <p><strong>Name:</strong> {user.name}</p>
+      <p><strong>Email:</strong> {user.email}</p>
+      <p><strong>Role:</strong> {user.role}</p>
     </div>
   );
 }
-
-export default Profile;
