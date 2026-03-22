@@ -13,7 +13,7 @@ function App() {
         <Route path="/patient/dashboard" element={<PatientDashboard />} />
         <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
         {/* You can add admin dashboard later */}
-        <Route path="*" element={<Login />} />
+        <Route path="*" element={<Signup />} />
       </Routes>
     </Router>
   );
