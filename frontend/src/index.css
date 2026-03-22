@@ -184,3 +184,56 @@ h2 {
     padding: 40px 20px;
   }
 }
+
+
+/* dashboard background */
+.dashboard-container {
+  min-height: 100vh;
+  background: #f4f7fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* profile card */
+.profile-card {
+  background: white;
+  padding: 40px;
+  width: 420px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  text-align: center;
+}
+
+.profile-card h1 {
+  margin-bottom: 20px;
+}
+
+.profile-section, .slots-section {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.slot-list {
+  list-style: none;
+  padding: 0;
+}
+
+.slot-item {
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+}
+
+.slot-item.available {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.slot-item.booked {
+  background-color: #f8d7da;
+  color: #721c24;
+}

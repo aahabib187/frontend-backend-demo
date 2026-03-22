@@ -1,7 +1,10 @@
+// src/pages/PatientDashboard.jsx
 import { useEffect, useState } from "react";
+import AuthLayout from "../components/AuthLayout";
 
-export default function Profile() {
+export default function PatientDashboard() {
   const [user, setUser] = useState(null);
+  const [appointments, setAppointments] = useState([]);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -12,26 +15,45 @@ export default function Profile() {
       return;
     }
 
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch(`http://localhost:3000/api/profile/${loggedInUser.email}`);
-        const data = await res.json();
+    setUser(loggedInUser);
 
-        if (!res.ok) {
-          setMessage(data.message || "Failed to fetch profile");
-          return;
-        }
+    // Fetch patient appointments from backend (replace URL with your API)
+const fetchAppointments = async () => {
+  try {
+    const res = await fetch(
+      `http://localhost:3000/api/patient/${loggedInUser.email}/appointments`
+    );
 
-        setUser(data);
-      } catch (err) {
-        console.error(err);
-        setMessage("Server error ❌");
+    // Debug: log raw response
+    const text = await res.text();
+    console.log("Raw response from appointments:", text);
+
+    // Only parse JSON if content-type is application/json
+    if (res.headers.get("content-type")?.includes("application/json")) {
+      const data = JSON.parse(text);
+
+      if (!res.ok) {
+        setMessage(data.message || "Failed to fetch appointments");
+        return;
       }
-    };
 
-    fetchProfile();
+      console.log("Appointments fetched:", data);
+      // setAppointments(data); // <-- your state update here
+    } else {
+      console.error("Appointments endpoint did not return JSON");
+      setMessage("Failed to fetch appointments ❌");
+    }
+
+  } catch (err) {
+    console.error("Fetch error:", err);
+    setMessage("Server error ❌");
+  }
+};
+
+    fetchAppointments();
   }, []);
 
+  // Loading / error states
   if (message) {
     return <p style={{ textAlign: "center", marginTop: "50px" }}>{message}</p>;
   }
@@ -41,11 +63,38 @@ export default function Profile() {
   }
 
   return (
-    <div style={{ padding: "50px", maxWidth: "400px", margin: "auto", border: "1px solid #ccc", borderRadius: "8px", textAlign: "center" }}>
-      <h1>Profile</h1>
-      <p><strong>Name:</strong> {user.name}</p>
-      <p><strong>Email:</strong> {user.email}</p>
-      <p><strong>Role:</strong> {user.role}</p>
-    </div>
+    <AuthLayout title={`Welcome, ${user.name}`}>
+      <div className="profile-section">
+        <h2>My Info</h2>
+        <p><strong>Name:</strong> {user.name}</p>
+        <p><strong>Email:</strong> {user.email}</p>
+        <p><strong>Role:</strong> {user.role}</p>
+
+        <button
+          className="submit-btn"
+          onClick={() => {
+            localStorage.removeItem("loggedInUser");
+            window.location.href = "/login";
+          }}
+        >
+          Logout
+        </button>
+      </div>
+
+      <div className="appointments-section">
+        <h2>My Appointments</h2>
+        {appointments.length === 0 ? (
+          <p>No appointments booked yet.</p>
+        ) : (
+          <ul>
+            {appointments.map((appt) => (
+              <li key={appt.id}>
+                Dr. {appt.doctorName} — {appt.slot} {appt.booked ? "(Booked)" : "(Available)"}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </AuthLayout>
   );
 }
