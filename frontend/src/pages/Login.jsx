@@ -27,7 +27,7 @@ export default function Login() {
         return;
       }
 
-      // Save logged-in user info for profile page
+      
       localStorage.setItem("loggedInUser", JSON.stringify(data.user));
       navigate("/profile");
 

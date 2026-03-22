@@ -26,7 +26,7 @@ function Signup() {
       !formData.email.includes("@") ||
       !formData.password ||
       formData.password.length < 6 ||
-      !formData.role // <-- validate role selection
+      !formData.role 
     ) {
       setMessage("Please fill all fields correctly!");
       return;
@@ -45,7 +45,7 @@ function Signup() {
           email: formData.email,
           pass: formData.password,
           phone: "01700000000",
-          role: formData.role, // <-- send selected role
+          role: formData.role, 
         }),
       });
 
@@ -67,7 +67,7 @@ function Signup() {
     <div className="container">
       <div className={`card ${fade ? "fade-in" : ""}`}>
         <div className="accent-stripe"></div>
-        <div className="logo">⚡ MACHO</div>
+        <div className="logo">⚡ DOC APPOINTER</div>
         <h2>SIGN UP</h2>
 
         <input

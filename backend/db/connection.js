@@ -1,9 +1,9 @@
 const oracledb = require("oracledb");
 
 const dbConfig = {
-  user: "APP",
-  password: "App12345",
-  connectString: "localhost:31521/FREEPDB1"
+  user: "system",
+  password: "Afnan@123",
+  connectString: "localhost/orclpdb"
 };
 
 async function connectDB() {
