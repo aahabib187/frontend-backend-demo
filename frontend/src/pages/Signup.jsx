@@ -1,16 +1,22 @@
 import { useState, useEffect } from "react";
 import "../index.css";
+import hospitalImg from "../assets/hospital.jpeg";
 
 function Signup() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "", // <-- added role
+    role: "",
   });
 
   const [message, setMessage] = useState("");
   const [fade, setFade] = useState(false);
+  const [passwordStatus, setPasswordStatus] = useState({
+    length: false,
+    capital: false,
+    number: false,
+  });
 
   useEffect(() => {
     setFade(true);
@@ -19,16 +25,33 @@ function Signup() {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
+  // Live password check
+  const checkPassword = (password) => {
+    setPasswordStatus({
+      length: password.length >= 8,
+      capital: /[A-Z]/.test(password),
+      number: /[0-9]/.test(password),
+    });
+  };
+
   const handleSubmit = async () => {
-    // Basic validation
-    if (
-      !formData.name ||
-      !formData.email.includes("@") ||
-      !formData.password ||
-      formData.password.length < 6 ||
-      !formData.role 
-    ) {
-      setMessage("Please fill all fields correctly!");
+    if (!formData.name) {
+      setMessage("Please enter your name.");
+      return;
+    }
+
+    if (!formData.email.includes("@")) {
+      setMessage("Please enter a valid email address.");
+      return;
+    }
+
+    if (!passwordStatus.length || !passwordStatus.capital || !passwordStatus.number) {
+      setMessage("Password does not meet all requirements.");
+      return;
+    }
+
+    if (!formData.role) {
+      setMessage("Please select a role.");
       return;
     }
 
@@ -37,15 +60,13 @@ function Signup() {
     try {
       const response = await fetch("http://localhost:3000/api/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
           pass: formData.password,
           phone: "01700000000",
-          role: formData.role, 
+          role: formData.role,
         }),
       });
 
@@ -53,13 +74,13 @@ function Signup() {
       console.log("Server response:", data);
 
       if (response.ok) {
-        setMessage("Signup successful! ✅");
+        setMessage("🎉 Signup successful! You can now log in.");
       } else {
         setMessage(data.message || "Signup failed ❌");
       }
     } catch (error) {
       console.error("Error:", error);
-      setMessage("Server not working ❌");
+      setMessage("Server not responding ❌");
     }
   };
 
@@ -69,6 +90,7 @@ function Signup() {
         <div className="accent-stripe"></div>
         <div className="logo">⚡ DOC APPOINTER</div>
         <h2>SIGN UP</h2>
+        <img src={hospitalImg} alt="Hospital" />
 
         <input
           type="text"
@@ -93,11 +115,26 @@ function Signup() {
           name="password"
           placeholder="Password"
           value={formData.password}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            checkPassword(e.target.value);
+          }}
           className="input-field"
         />
 
-        {/* NEW: Role Dropdown */}
+        {/* Live password hints */}
+        <div className="password-hints">
+          <p style={{ color: passwordStatus.length ? "green" : "red" }}>
+            {passwordStatus.length ? "✔" : "❌"} At least 8 characters
+          </p>
+          <p style={{ color: passwordStatus.capital ? "green" : "red" }}>
+            {passwordStatus.capital ? "✔" : "❌"} At least 1 CAPITAL letter
+          </p>
+          <p style={{ color: passwordStatus.number ? "green" : "red" }}>
+            {passwordStatus.number ? "✔" : "❌"} At least 1 number
+          </p>
+        </div>
+
         <select
           name="role"
           value={formData.role}
@@ -116,7 +153,7 @@ function Signup() {
 
         <p
           className={`message ${
-            message.includes("successful") ? "success" : "error"
+            message.includes("successful") || message.includes("✅") ? "success" : "error"
           }`}
         >
           {message}

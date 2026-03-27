@@ -237,3 +237,35 @@ h2 {
   background-color: #f8d7da;
   color: #721c24;
 }
+
+.dashboard-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+
+  background: linear-gradient(
+      rgba(0,0,0,0.5),
+      rgba(0,0,0,0.5)
+    ),
+    url("/hospital-bg.jpg");
+
+  background-size: cover;
+}
+
+.profile-card {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.doctor-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+}

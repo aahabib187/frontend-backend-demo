@@ -1,99 +1,105 @@
-// src/pages/DoctorDashboard.jsx
 import { useEffect, useState } from "react";
-import AuthLayout from "../components/AuthLayout";
+import defaultImg from "../assets/default.png";
 
 export default function DoctorDashboard() {
-  const [user, setUser] = useState(null);
-  const [slots, setSlots] = useState([]);
+  const [doctor, setDoctor] = useState({
+    specialization: "",
+    license: "",
+    photo: null,
+  });
+
+  const [preview, setPreview] = useState(null);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
 
-    if (!loggedInUser) {
-      setMessage("No user logged in!");
-      return;
+  // handle text change
+  const handleChange = (e) => {
+    setDoctor({ ...doctor, [e.target.name]: e.target.value });
+  };
+
+  // handle image upload
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    setDoctor({ ...doctor, photo: file });
+
+    if (file) {
+      setPreview(URL.createObjectURL(file));
     }
+  };
 
-    setUser(loggedInUser);
+  const handleSave = async () => {
+    setMessage("Saving...");
 
-    // For now, placeholder slots
-    const placeholderSlots = [
-      { id: 1, startTime: "10:00 AM", endTime: "10:30 AM", status: "AVAILABLE" },
-      { id: 2, startTime: "10:30 AM", endTime: "11:00 AM", status: "BOOKED" },
-      { id: 3, startTime: "11:00 AM", endTime: "11:30 AM", status: "AVAILABLE" },
-    ];
-    setSlots(placeholderSlots);
+    const formData = new FormData();
+    formData.append("email", loggedInUser.email);
+    formData.append("specialization", doctor.specialization);
+    formData.append("license", doctor.license);
+    formData.append("photo", doctor.photo);
 
-    // TODO: replace above with backend fetch when table is ready
-    /*
-    const fetchSlots = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:3000/api/doctor/${loggedInUser.email}/slots`
-        );
-        const data = await res.json();
-
-        if (!res.ok) {
-          setMessage(data.message || "Failed to fetch slots");
-          return;
+    try {
+      const res = await fetch(
+        "http://localhost:3000/api/doctor/profile",
+        {
+          method: "POST",
+          body: formData,
         }
+      );
 
-        setSlots(data);
-      } catch (err) {
-        console.error(err);
-        setMessage("Server error ❌");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.message || "Save failed");
+        return;
       }
-    };
 
-    fetchSlots();
-    */
-  }, []);
-
-  if (message) {
-    return <p style={{ textAlign: "center", marginTop: "50px" }}>{message}</p>;
-  }
-
-  if (!user) {
-    return <p style={{ textAlign: "center", marginTop: "50px" }}>Loading...</p>;
-  }
+      setMessage("Profile saved ✅");
+    } catch (err) {
+      console.error(err);
+      setMessage("Server error ❌");
+    }
+  };
 
   return (
-    <AuthLayout title={`Doctor Dashboard`}>
-      <div className="profile-section">
-        <h2>My Info</h2>
-        <p><strong>Name:</strong> {user.name}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Role:</strong> {user.role}</p>
+    <div className="dashboard-container">
+      <div className="profile-card">
+        <h2>Doctor Profile</h2>
 
-        <button
-          className="submit-btn"
-          onClick={() => {
-            localStorage.removeItem("loggedInUser");
-            window.location.href = "/login";
-          }}
-        >
-          Logout
+        {/* PHOTO */}
+        <div className="photo-section">
+         <img
+  src={doctor.photo || defaultImg}
+  alt="Doctor"
+  className="doctor-photo"
+/>
+
+          <input type="file" onChange={handleImage} />
+        </div>
+
+        {/* SPECIALIZATION */}
+        <input
+          name="specialization"
+          placeholder="Specialization (Cardiology, Neurology...)"
+          value={doctor.specialization}
+          onChange={handleChange}
+          className="input-field"
+        />
+
+        {/* LICENSE */}
+        <input
+          name="license"
+          placeholder="Medical License Number"
+          value={doctor.license}
+          onChange={handleChange}
+          className="input-field"
+        />
+
+        <button className="submit-btn" onClick={handleSave}>
+          Save Profile
         </button>
-      </div>
 
-      <div className="slots-section">
-        <h2>My Time Slots</h2>
-        {slots.length === 0 ? (
-          <p style={{ fontStyle: "italic" }}>No time slots assigned yet.</p>
-        ) : (
-          <ul className="slot-list">
-            {slots.map((slot) => (
-              <li
-                key={slot.id}
-                className={`slot-item ${slot.status === "BOOKED" ? "booked" : "available"}`}
-              >
-                {slot.startTime} - {slot.endTime} | {slot.status}
-              </li>
-            ))}
-          </ul>
-        )}
+        <p className="message">{message}</p>
       </div>
-    </AuthLayout>
+    </div>
   );
 }
