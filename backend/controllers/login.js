@@ -4,7 +4,7 @@ const connectDB = require("../db/connection");
 
 exports.login = async (req, res) => {
   const { email, pass } = req.body;
-  console.log("📨 Login request received:", { email });
+  console.log(" Login request received:", { email });
 
   let connection;
 
@@ -12,7 +12,7 @@ exports.login = async (req, res) => {
     connection = await connectDB();
     console.log("🔗 Connected to database");
 
-    // Find user by email
+    
     const result = await connection.execute(
       `SELECT NAME, EMAIL, PASS, ROLE FROM USERS WHERE EMAIL = :email`,
       { email }
@@ -30,7 +30,7 @@ exports.login = async (req, res) => {
       role: user[3],
     };
 
-    // Compare password
+    
     const isMatch = await bcrypt.compare(pass, dbUser.hashedPassword);
 
     if (!isMatch) {
@@ -47,7 +47,7 @@ exports.login = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("❌ Login error:", err.message);
+    console.error(" Login error:", err.message);
     res.status(500).json({ error: err.message });
   } finally {
     if (connection) {
