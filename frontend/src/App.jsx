@@ -1,8 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PatientDashboard from "./pages/Profile";
 import DoctorDashboard from "./pages/DoctorDashboard";
+import DoctorSetup from "./pages/DoctorSetup";
+import PatientSetup from "./pages/PatientSetup";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -10,9 +14,17 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+
+        {/* DASHBOARDS */}
         <Route path="/patient/dashboard" element={<PatientDashboard />} />
         <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-        {/* You can add admin dashboard later */}
+
+        {/* ✅ ADD THESE (YOU MISSED THEM) */}
+        <Route path="/doctor/setup" element={<DoctorSetup />} />
+        <Route path="/patient/setup" element={<PatientSetup />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+        {/* DEFAULT */}
         <Route path="*" element={<Signup />} />
       </Routes>
     </Router>

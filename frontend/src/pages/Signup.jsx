@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import "../index.css";
 import hospitalImg from "../assets/hospital.jpeg";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -74,11 +76,36 @@ function Signup() {
       console.log("Server response:", data);
 
       if (response.ok) {
-        setMessage("🎉 Signup successful! You can now log in.");
-      } else {
+  setMessage("🎉 Signup successful!");
+
+  // save logged user temporarily
+  localStorage.setItem(
+    "user",
+    JSON.stringify({
+      name: formData.name,
+      email: formData.email,
+      role: formData.role,
+    })
+  );
+
+  // role-based redirect
+  setTimeout(() => {
+    if (formData.role === "DOCTOR") {
+      navigate("/doctor/setup");
+    } else if (formData.role === "PATIENT") {
+      navigate("/patient/setup");
+    } else if (formData.role === "ADMIN") {
+      navigate("/admin/dashboard");
+    }
+  }, 1000);
+}
+    else 
+     {
         setMessage(data.message || "Signup failed ❌");
       }
-    } catch (error) {
+    } 
+    
+    catch (error) {
       console.error("Error:", error);
       setMessage("Server not responding ❌");
     }

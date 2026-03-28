@@ -1,104 +1,156 @@
 import { useEffect, useState } from "react";
 import defaultImg from "../assets/default.png";
+import "../index.css"; // keep your global styles
 
 export default function DoctorDashboard() {
+  const loggedInUser = JSON.parse(localStorage.getItem("user")); // doctor info
+  const savedAvailability = JSON.parse(localStorage.getItem("doctorAvailability")) || {};
+
   const [doctor, setDoctor] = useState({
-    specialization: "",
-    license: "",
-    photo: null,
+    name: loggedInUser?.name || "",
+    license: loggedInUser?.license || "Not provided",
+    specialization: loggedInUser?.specialization || "Not provided",
+    photo: loggedInUser?.photo || null,
   });
 
-  const [preview, setPreview] = useState(null);
+  const [availability, setAvailability] = useState({
+    Sunday: savedAvailability.Sunday || { active: false, start: "10:00", end: "18:00" },
+    Monday: savedAvailability.Monday || { active: false, start: "10:00", end: "18:00" },
+    Tuesday: savedAvailability.Tuesday || { active: false, start: "10:00", end: "18:00" },
+    Wednesday: savedAvailability.Wednesday || { active: false, start: "10:00", end: "18:00" },
+    Thursday: savedAvailability.Thursday || { active: false, start: "10:00", end: "18:00" },
+    Friday: savedAvailability.Friday || { active: false, start: "10:00", end: "18:00" },
+    Saturday: savedAvailability.Saturday || { active: false, start: "10:00", end: "18:00" },
+  });
+
+  const [appointments, setAppointments] = useState([
+    // placeholder, later fetch from backend
+    { id: 1, patientName: "John Doe", date: "2026-04-01", startTime: "10:00", endTime: "10:30", status: "Booked" },
+    { id: 2, patientName: "Jane Smith", date: "2026-04-01", startTime: "11:00", endTime: "11:30", status: "Booked" },
+  ]);
+
   const [message, setMessage] = useState("");
 
-  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-
-  // handle text change
-  const handleChange = (e) => {
-    setDoctor({ ...doctor, [e.target.name]: e.target.value });
+  // handle checkbox / dropdown change
+  const handleAvailabilityChange = (day, field, value) => {
+    setAvailability({
+      ...availability,
+      [day]: { ...availability[day], [field]: field === "active" ? value : value },
+    });
   };
 
-  // handle image upload
-  const handleImage = (e) => {
-    const file = e.target.files[0];
-    setDoctor({ ...doctor, photo: file });
-
-    if (file) {
-      setPreview(URL.createObjectURL(file));
-    }
+  const handleSaveAvailability = () => {
+    localStorage.setItem("doctorAvailability", JSON.stringify(availability));
+    setMessage("Availability updated ✅");
+    setTimeout(() => setMessage(""), 3000);
   };
 
-  const handleSave = async () => {
-    setMessage("Saving...");
-
-    const formData = new FormData();
-    formData.append("email", loggedInUser.email);
-    formData.append("specialization", doctor.specialization);
-    formData.append("license", doctor.license);
-    formData.append("photo", doctor.photo);
-
-    try {
-      const res = await fetch(
-        "http://localhost:3000/api/doctor/profile",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setMessage(data.message || "Save failed");
-        return;
-      }
-
-      setMessage("Profile saved ✅");
-    } catch (err) {
-      console.error(err);
-      setMessage("Server error ❌");
-    }
-  };
+  // generate time options for dropdown
+  const timeOptions = [];
+  for (let h = 10; h <= 22; h++) {
+    timeOptions.push(h.toString().padStart(2, "0") + ":00");
+    timeOptions.push(h.toString().padStart(2, "0") + ":30");
+  }
 
   return (
-    <div className="dashboard-container">
-      <div className="profile-card">
+    <div className="container" style={{ padding: "20px" }}>
+      {/* PROFILE CARD */}
+      <div className="card fade-in" style={{ maxWidth: "500px", margin: "0 auto 30px auto", padding: "20px" }}>
+        <div className="accent-stripe"></div>
+        <div className="logo">⚡ DOC APPOINTER</div>
         <h2>Doctor Profile</h2>
-
-        {/* PHOTO */}
-        <div className="photo-section">
-         <img
-  src={doctor.photo || defaultImg}
-  alt="Doctor"
-  className="doctor-photo"
-/>
-
-          <input type="file" onChange={handleImage} />
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <img
+            src={doctor.photo || defaultImg}
+            alt="Doctor"
+            style={{ width: "120px", height: "120px", borderRadius: "50%", objectFit: "cover", marginBottom: "10px" }}
+          />
         </div>
+        <p><strong>Name:</strong> {doctor.name}</p>
+        <p><strong>License:</strong> {doctor.license}</p>
+        <p><strong>Specialization:</strong> {doctor.specialization}</p>
+      </div>
 
-        {/* SPECIALIZATION */}
-        <input
-          name="specialization"
-          placeholder="Specialization (Cardiology, Neurology...)"
-          value={doctor.specialization}
-          onChange={handleChange}
-          className="input-field"
-        />
-
-        {/* LICENSE */}
-        <input
-          name="license"
-          placeholder="Medical License Number"
-          value={doctor.license}
-          onChange={handleChange}
-          className="input-field"
-        />
-
-        <button className="submit-btn" onClick={handleSave}>
-          Save Profile
+      {/* AVAILABILITY */}
+      <div className="card fade-in" style={{ maxWidth: "700px", margin: "0 auto 30px auto", padding: "20px" }}>
+        <div className="accent-stripe"></div>
+        <h2>Edit Availability</h2>
+        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "15px" }}>
+          <thead>
+            <tr>
+              <th style={{ textAlign: "left" }}>Day</th>
+              <th>Active</th>
+              <th>Start Time</th>
+              <th>End Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.keys(availability).map((day) => (
+              <tr key={day}>
+                <td>{day}</td>
+                <td style={{ textAlign: "center" }}>
+                  <input
+                    type="checkbox"
+                    checked={availability[day].active}
+                    onChange={(e) => handleAvailabilityChange(day, "active", e.target.checked)}
+                  />
+                </td>
+                <td style={{ textAlign: "center" }}>
+                  <select
+                    value={availability[day].start}
+                    onChange={(e) => handleAvailabilityChange(day, "start", e.target.value)}
+                  >
+                    {timeOptions.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </td>
+                <td style={{ textAlign: "center" }}>
+                  <select
+                    value={availability[day].end}
+                    onChange={(e) => handleAvailabilityChange(day, "end", e.target.value)}
+                  >
+                    {timeOptions.map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button className="submit-btn" style={{ marginTop: "15px" }} onClick={handleSaveAvailability}>
+          Save Availability
         </button>
+        {message && <p className="message">{message}</p>}
+      </div>
 
-        <p className="message">{message}</p>
+      {/* APPOINTMENTS */}
+      <div className="card fade-in" style={{ maxWidth: "800px", margin: "0 auto 50px auto", padding: "20px" }}>
+        <div className="accent-stripe"></div>
+        <h2>Booked Appointments</h2>
+        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "15px" }}>
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Date</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {appointments.map((appt) => (
+              <tr key={appt.id}>
+                <td>{appt.patientName}</td>
+                <td>{appt.date}</td>
+                <td>{appt.startTime}</td>
+                <td>{appt.endTime}</td>
+                <td>{appt.status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
