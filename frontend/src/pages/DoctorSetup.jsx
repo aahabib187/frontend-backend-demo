@@ -1,18 +1,14 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../index.css";
-import hospitalImg from "../assets/hospital.jpeg";
+// DoctorSetup.jsx
+import { useState, useEffect } from "react";
 
-export default function DoctorSetup() {
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
-
+function DoctorSetup() {
   const [doctorData, setDoctorData] = useState({
     licenseNumber: "",
     degrees: "",
     experienceYears: "",
     deptId: "",
     branchId: "",
+    specializations: [],
   });
 
   const [schedule, setSchedule] = useState({
@@ -25,208 +21,189 @@ export default function DoctorSetup() {
     Sunday: { selected: false, startTime: "", endTime: "" },
   });
 
+  const [specializationOptions, setSpecializationOptions] = useState([]);
   const [message, setMessage] = useState("");
 
-  const timeOptions = Array.from({ length: 24 }, (_, i) => {
-    const hour = 10 + i;
-    if (hour > 22) return null;
-    const h = hour < 10 ? `0${hour}` : hour;
-    return `${h}:00`;
-  }).filter(Boolean);
+  const userEmail = localStorage.getItem("userEmail"); // assuming login saves email
 
-  const handleDoctorChange = (e) => {
-    setDoctorData({ ...doctorData, [e.target.name]: e.target.value });
+  // Fetch specialization options on mount
+  useEffect(() => {
+    async function fetchSpecializations() {
+      try {
+        const res = await fetch("/api/specializations"); // backend endpoint to get all specializations
+        const data = await res.json();
+        setSpecializationOptions(data);
+      } catch (err) {
+        console.error("Failed to fetch specializations", err);
+      }
+    }
+    fetchSpecializations();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setDoctorData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSpecializationChange = (e) => {
+    const options = Array.from(e.target.selectedOptions, (option) => option.value);
+    setDoctorData((prev) => ({ ...prev, specializations: options }));
   };
 
   const handleScheduleChange = (day, field, value) => {
-    setSchedule({
-      ...schedule,
-      [day]: { ...schedule[day], [field]: value },
-    });
+    setSchedule((prev) => ({
+      ...prev,
+      [day]: { ...prev[day], [field]: field === "selected" ? value : value },
+    }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // prevent page reload
+    setMessage("Saving...");
 
-    // Validate doctor info
-    if (
-      !doctorData.licenseNumber ||
-      !doctorData.degrees ||
-      !doctorData.experienceYears ||
-      !doctorData.deptId ||
-      doctorData.deptId < 1 ||
-      doctorData.deptId > 10
-    ) {
-      setMessage("Please fill all doctor fields correctly.");
-      return;
+    try {
+      const res = await fetch("/api/doctor/setup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: userEmail,
+          doctorData,
+          schedule,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Failed to save");
+
+      setMessage("Profile saved successfully!");
+    } catch (err) {
+      console.error(err);
+      setMessage("Error: " + err.message);
     }
-
-    // Validate at least one day selected
-    const selectedDays = Object.values(schedule).filter((s) => s.selected);
-    if (selectedDays.length === 0) {
-      setMessage("Please select at least one available day.");
-      return;
-    }
-
-    // Validate time ranges
-    for (const [day, slot] of Object.entries(schedule)) {
-      if (slot.selected && slot.startTime >= slot.endTime) {
-        setMessage(`Start time must be before end time for ${day}.`);
-        return;
-      }
-    }
-
-    setMessage("Profile saved successfully! Redirecting...");
-
-    localStorage.setItem("doctorProfile", JSON.stringify(doctorData));
-    localStorage.setItem("doctorSchedule", JSON.stringify(schedule));
-
-    setTimeout(() => {
-      navigate("/doctor/dashboard");
-    }, 1000);
   };
 
   return (
-    <div className="container">
-      <div className="card fade-in" style={{ maxWidth: "700px" }}>
-        <div className="accent-stripe"></div>
-        <div className="logo">⚡ DOC APPOINTER</div>
-        <h2>Doctor Profile Setup</h2>
-        <p>
-          Welcome <strong>{user?.name}</strong>, please fill your profile and
-          availability schedule.
-        </p>
-        <img
-          src={hospitalImg}
-          alt="Hospital"
-          style={{
-            width: "100%",
-            borderRadius: "10px",
-            marginBottom: "20px",
-            objectFit: "cover",
-            maxHeight: "180px",
-          }}
-        />
+    <div style={{ maxWidth: "600px", margin: "auto" }}>
+      <h2>Doctor Setup</h2>
 
-        <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>License Number</label>
           <input
             type="text"
             name="licenseNumber"
-            placeholder="License Number"
             value={doctorData.licenseNumber}
-            onChange={handleDoctorChange}
-            className="input-field"
+            onChange={handleInputChange}
+            required
           />
+        </div>
+
+        <div>
+          <label>Degrees</label>
           <input
             type="text"
             name="degrees"
-            placeholder="Degrees (e.g. MBBS, MD)"
             value={doctorData.degrees}
-            onChange={handleDoctorChange}
-            className="input-field"
+            onChange={handleInputChange}
+            required
           />
+        </div>
+
+        <div>
+          <label>Years of Experience</label>
           <input
             type="number"
             name="experienceYears"
-            placeholder="Years of Experience"
             value={doctorData.experienceYears}
-            onChange={handleDoctorChange}
-            className="input-field"
+            onChange={handleInputChange}
+            required
           />
+        </div>
+
+        <div>
+          <label>Department ID</label>
           <input
             type="number"
             name="deptId"
-            placeholder="Department ID (1-10)"
             value={doctorData.deptId}
-            onChange={handleDoctorChange}
-            className="input-field"
+            onChange={handleInputChange}
+            required
           />
+        </div>
+
+        <div>
+          <label>Branch ID</label>
           <input
             type="number"
             name="branchId"
-            placeholder="Branch ID"
             value={doctorData.branchId}
-            onChange={handleDoctorChange}
-            className="input-field"
+            onChange={handleInputChange}
+            required
           />
+        </div>
 
-          <h3 style={{ marginTop: "20px" }}>Available Days & Time</h3>
-          <table style={{ width: "100%", marginTop: "10px", textAlign: "left" }}>
-            <thead>
-              <tr>
-                <th>Day</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.entries(schedule).map(([day, slot]) => (
-                <tr key={day}>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={slot.selected}
-                      onChange={(e) =>
-                        handleScheduleChange(day, "selected", e.target.checked)
-                      }
-                    />{" "}
-                    {day}
-                  </td>
-                  <td>
-                    <select
-                      disabled={!slot.selected}
-                      value={slot.startTime}
-                      onChange={(e) =>
-                        handleScheduleChange(day, "startTime", e.target.value)
-                      }
-                      className="input-field"
-                    >
-                      <option value="">Start Time</option>
-                      {timeOptions.map((t) => (
-                        <option key={t} value={t}>
-                          {t}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td>
-                    <select
-                      disabled={!slot.selected}
-                      value={slot.endTime}
-                      onChange={(e) =>
-                        handleScheduleChange(day, "endTime", e.target.value)
-                      }
-                      className="input-field"
-                    >
-                      <option value="">End Time</option>
-                      {timeOptions.map((t) => (
-                        <option key={t} value={t}>
-                          {t}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <button className="submit-btn" type="submit" style={{ marginTop: "20px" }}>
-            Save Profile
-          </button>
-        </form>
-
-        {message && (
-          <p
-            className={`message ${
-              message.includes("success") ? "success" : "error"
-            }`}
-            style={{ marginTop: "15px" }}
+        <div>
+          <h3>Specializations</h3>
+          <select
+            multiple
+            value={doctorData.specializations}
+            onChange={handleSpecializationChange}
           >
-            {message}
-          </p>
-        )}
-      </div>
+            {specializationOptions.map((spec) => (
+              <option key={spec.ID} value={spec.ID}>
+                {spec.NAME || spec.ID}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <h3>Weekly Schedule</h3>
+          {Object.keys(schedule).map((day) => (
+            <div key={day}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={schedule[day].selected}
+                  onChange={(e) =>
+                    handleScheduleChange(day, "selected", e.target.checked)
+                  }
+                />{" "}
+                {day}
+              </label>
+              {schedule[day].selected && (
+                <>
+                  <input
+                    type="time"
+                    value={schedule[day].startTime}
+                    onChange={(e) =>
+                      handleScheduleChange(day, "startTime", e.target.value)
+                    }
+                    required
+                  />
+                  <input
+                    type="time"
+                    value={schedule[day].endTime}
+                    onChange={(e) =>
+                      handleScheduleChange(day, "endTime", e.target.value)
+                    }
+                    required
+                  />
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <button type="submit">Save Profile</button>
+      </form>
+
+      {message && <p>{message}</p>}
     </div>
   );
 }
+
+export default DoctorSetup;
