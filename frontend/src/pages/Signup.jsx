@@ -77,27 +77,25 @@ function Signup() {
       const data = await response.json();
       console.log("Server response:", data);
 
-      if (response.ok) {
-        setMessage("🎉 Signup successful!");
+if (response.ok) {
+  setMessage("🎉 Signup successful!");
 
-        // Save logged user temporarily
-        localStorage.setItem(
-          "user",
-          JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            role: formData.role,
-          })
-        );
+  // save logged user info properly
+  localStorage.setItem("userId", data.user.id);      // <-- save userId returned from backend
+  localStorage.setItem("userEmail", data.user.email); // <-- save email
+  localStorage.setItem("userRole", data.user.role);   // optional, useful for role-based logic
 
-        // Role-based redirect
-        setTimeout(() => {
-          if (formData.role === "DOCTOR") navigate("/doctor/setup");
-          else if (formData.role === "PATIENT") navigate("/patient/setup");
-          else if (formData.role === "ADMIN") navigate("/admin/dashboard");
-        }, 1000);
-      } else {
+  // role-based redirect
+  setTimeout(() => {
+    if (formData.role === "DOCTOR") {
+      navigate("/doctor/setup");
+    } else if (formData.role === "PATIENT") {
+      navigate("/patient/setup");
+    } else if (formData.role === "ADMIN") {
+      navigate("/admin/dashboard");
+    }
+  }, 1000);
+} else {
         // Show backend error (e.g., email already exists)
         setMessage(data.error || "Signup failed ❌");
       }

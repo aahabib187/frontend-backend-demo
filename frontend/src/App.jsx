@@ -8,6 +8,7 @@ import DoctorDashboard from "./pages/DoctorDashboard";
 import DoctorSetup from "./pages/DoctorSetup";
 import PatientSetup from "./pages/PatientSetup";
 import AdminDashboard from "./pages/AdminDashboard";
+import SpecializationSetup from "./pages/SpecializationSetup"; // import the component
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
         <Route path="/doctor/setup" element={<DoctorSetup />} />
         <Route path="/patient/setup" element={<PatientSetup />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-
+<Route path="/doctor/specialization/setup" element={<SpecializationSetup />} />
         {/* DEFAULT */}
         <Route path="*" element={<Signup />} />
       </Routes>
