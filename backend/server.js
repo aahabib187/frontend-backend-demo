@@ -10,6 +10,9 @@ app.use(cors());
 app.use(express.json());
 app.use('/api', authRoutes);
 
+const doctorRoutes = require("./routes/doctorRoutes");
+app.use("/api/doctor", doctorRoutes); // now /api/getSpecializations works
+
 const connectDB = require('./db/connection');
 
 app.get('/test', async (req, res) => {

@@ -7,6 +7,9 @@ const timetableController = require("../controllers/timetable");
 const appointmentController = require("../controllers/appointmentController");
 const patientAppointmentsController = require("../controllers/patientAppointments");
 const doctorProfileController = require("../controllers/doctorProfileUpdate");
+const { saveDoctorSpecialization } = require("../controllers/doctorSpecialization"); // Afnan
+const doctorRoutes = require("./doctorRoutes");
+
 
 console.log("auth routes loaded");
 
@@ -18,5 +21,8 @@ router.get("/doctor/:doctorId/available-slots", appointmentController.getAvailab
 router.post("/appointments/book", appointmentController.bookAppointment);
 router.get("/patient/:email/appointments", patientAppointmentsController.getPatientAppointmentsByEmail);
 router.put("/doctor/profile", doctorProfileController.updateDoctorProfile);
+
+// ✅ New specialization route
+router.post("/doctor/specialization", saveDoctorSpecialization);
 
 module.exports = router;
