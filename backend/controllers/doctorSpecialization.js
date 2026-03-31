@@ -143,7 +143,7 @@ exports.saveDoctorSpecialization = async (req, res) => {
 
     // 1️⃣ Get doctor ID by email
     const doctorResult = await connection.execute(
-      `SELECT ID AS doctor_id 
+      `SELECT d.ID AS doctor_id 
        FROM DOCTOR d
        JOIN USERS u ON d.USER_ID = u.ID
        WHERE TRIM(LOWER(u.EMAIL)) = TRIM(LOWER(:email))`,
