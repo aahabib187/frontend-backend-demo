@@ -9,6 +9,7 @@ function Signup() {
     name: "",
     email: "",
     password: "",
+    phone: "",
     role: "",
   });
 
@@ -27,7 +28,7 @@ function Signup() {
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  // Live password check
+  // Live password validation
   const checkPassword = (password) => {
     setPasswordStatus({
       length: password.length >= 8,
@@ -41,17 +42,18 @@ function Signup() {
       setMessage("Please enter your name.");
       return;
     }
-
     if (!formData.email.includes("@")) {
       setMessage("Please enter a valid email address.");
       return;
     }
-
     if (!passwordStatus.length || !passwordStatus.capital || !passwordStatus.number) {
       setMessage("Password does not meet all requirements.");
       return;
     }
-
+    if (!/^\d{11}$/.test(formData.phone)) {
+      setMessage("Phone must be 11 digits.");
+      return;
+    }
     if (!formData.role) {
       setMessage("Please select a role.");
       return;
@@ -67,7 +69,7 @@ function Signup() {
           name: formData.name,
           email: formData.email,
           pass: formData.password,
-          phone: "01700000000",
+          phone: formData.phone,
           role: formData.role,
         }),
       });
@@ -76,36 +78,30 @@ function Signup() {
       console.log("Server response:", data);
 
       if (response.ok) {
-  setMessage("🎉 Signup successful!");
+        setMessage("🎉 Signup successful!");
 
-  // save logged user temporarily
-  localStorage.setItem(
-    "user",
-    JSON.stringify({
-      name: formData.name,
-      email: formData.email,
-      role: formData.role,
-    })
-  );
+        // Save logged user temporarily
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            role: formData.role,
+          })
+        );
 
-  // role-based redirect
-  setTimeout(() => {
-    if (formData.role === "DOCTOR") {
-      navigate("/doctor/setup");
-    } else if (formData.role === "PATIENT") {
-      navigate("/patient/setup");
-    } else if (formData.role === "ADMIN") {
-      navigate("/admin/dashboard");
-    }
-  }, 1000);
-}
-    else 
-     {
-        setMessage(data.message || "Signup failed ❌");
+        // Role-based redirect
+        setTimeout(() => {
+          if (formData.role === "DOCTOR") navigate("/doctor/setup");
+          else if (formData.role === "PATIENT") navigate("/patient/setup");
+          else if (formData.role === "ADMIN") navigate("/admin/dashboard");
+        }, 1000);
+      } else {
+        // Show backend error (e.g., email already exists)
+        setMessage(data.error || "Signup failed ❌");
       }
-    } 
-    
-    catch (error) {
+    } catch (error) {
       console.error("Error:", error);
       setMessage("Server not responding ❌");
     }
@@ -162,6 +158,16 @@ function Signup() {
           </p>
         </div>
 
+        {/* Phone input */}
+        <input
+          type="text"
+          name="phone"
+          placeholder="Phone (11 digits)"
+          value={formData.phone}
+          onChange={handleChange}
+          className="input-field"
+        />
+
         <select
           name="role"
           value={formData.role}
@@ -185,6 +191,14 @@ function Signup() {
         >
           {message}
         </p>
+
+        {/* Login option */}
+        <div className="login-option">
+          <p>Already have an account?</p>
+          <button className="login-btn" onClick={() => navigate("/login")}>
+            LOGIN
+          </button>
+        </div>
       </div>
     </div>
   );

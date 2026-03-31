@@ -269,3 +269,29 @@ h2 {
   object-fit: cover;
   margin-bottom: 15px;
 }
+
+.login-option {
+  text-align: center; /* centers the content inside this div */
+  margin-top: 20px;
+}
+
+.login-option p {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.login-btn {
+  background-color: #28a745; /* Bootstrap-style green */
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-btn:hover {
+  background-color: #218838; /* slightly darker green on hover */
+}

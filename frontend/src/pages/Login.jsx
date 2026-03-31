@@ -28,23 +28,41 @@ const handleLogin = async () => {
       return;
     }
 
-    localStorage.setItem("loggedInUser", JSON.stringify(data.user));
-   localStorage.setItem("loggedInUser", JSON.stringify(data.user));
+    const { role, id: userId } = data.user;
 
-if (data.user.role === "PATIENT") {
-  navigate("/patient/dashboard");
-} else if (data.user.role === "DOCTOR") {
-  navigate("/doctor/dashboard");
-} else if (data.user.role === "ADMIN") {
-  navigate("/admin/dashboard");
-}
+    // ✅ Save email (and optional role/id) to localStorage
+    localStorage.setItem("userEmail", data.user.email);
+    localStorage.setItem("userRole", role);
+    localStorage.setItem("userId", data.user.id);
+
+    if (role === "DOCTOR") {
+      const profileRes = await fetch(
+        `http://localhost:3000/api/profile/${data.user.email}`
+      );
+      const profileData = await profileRes.json();
+
+      if (!profileRes.ok) {
+        setMessage(profileData.error || "Failed to check doctor profile");
+        return;
+      }
+
+      if (profileData.exists) {
+        navigate("/doctor/dashboard");
+      } else {
+        navigate("/doctor/setup");
+      }
+
+    } else if (role === "PATIENT") {
+      navigate("/patient/dashboard");
+    } else if (role === "ADMIN") {
+      navigate("/admin/dashboard");
+    }
 
   } catch (err) {
     console.error(err);
     setMessage("Server error ❌");
   }
 };
-
  
 
 return (
