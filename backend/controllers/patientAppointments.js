@@ -19,7 +19,7 @@ exports.getPatientAppointmentsByEmail = async (req, res) => {
   let connection;
 
   if (!email) {
-    return res.status(400).json({ error: "Patient email is required" });
+    return res.status(400).json({ error: "❌ Patient email is required" });
   }
 
   try {
@@ -34,7 +34,7 @@ exports.getPatientAppointmentsByEmail = async (req, res) => {
     );
 
     if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: "Patient user not found" });
+      return res.status(404).json({ error: "❌ Patient user not found" });
     }
 
     const userId = userResult.rows[0][0];
@@ -47,7 +47,7 @@ exports.getPatientAppointmentsByEmail = async (req, res) => {
     );
 
     if (patientResult.rows.length === 0) {
-      return res.status(404).json({ error: "Patient profile not found" });
+      return res.status(404).json({ error: "❌ Patient profile not found" });
     }
 
     const patientId = patientResult.rows[0][0];
@@ -79,7 +79,7 @@ exports.getPatientAppointmentsByEmail = async (req, res) => {
     return res.status(200).json(appointments);
   } catch (error) {
     console.error("Error fetching patient appointments:", error);
-    return res.status(500).json({ error: "Failed to fetch patient appointments" });
+    return res.status(500).json({ error: "❌ Failed to fetch patient appointments" });
   } finally {
     if (connection) {
       try {

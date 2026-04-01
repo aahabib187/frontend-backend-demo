@@ -6,7 +6,7 @@ exports.saveDoctorTimeSlots = async (req, res) => {
 
   // ✅ Validate
   if (!email || !Array.isArray(timeSlots) || timeSlots.length === 0) {
-    return res.status(400).json({ error: "Email and timeSlots array are required" });
+    return res.status(400).json({ error: "❌ Email and timeSlots array are required" });
   }
 
   let connection;
@@ -24,7 +24,7 @@ exports.saveDoctorTimeSlots = async (req, res) => {
     );
 
     if (doctorResult.rows.length === 0) {
-      return res.status(404).json({ error: "Doctor not found" });
+      return res.status(404).json({ error: "❌ Doctor not found" });
     }
 
     const doctorId = doctorResult.rows[0].DOCTOR_ID;
@@ -50,14 +50,14 @@ exports.saveDoctorTimeSlots = async (req, res) => {
     }
 
     await connection.commit();
-    res.status(200).json({ message: "Time slots saved successfully" });
+    res.status(200).json({ message: "✅ Time slots saved successfully" });
 
   } catch (err) {
     console.error("Error saving doctor time slots:", err);
     if (connection) {
       try { await connection.rollback(); } catch (_) {}
     }
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "❌ Server error" });
   } finally {
     if (connection) {
       try { await connection.close(); } catch (_) {}

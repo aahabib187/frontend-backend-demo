@@ -15,7 +15,7 @@ exports.createPatientProfile = async (req, res) => {
   
   if (!userId) {
     return res.status(400).json({
-      error: "userId is required",
+      error: "❌ userId is required",
     });
   }
 
@@ -48,13 +48,13 @@ WHERE USER_ID = :userId
     await connection.execute(sql, binds, { autoCommit: true });
 
     return res.status(201).json({
-      message: "Patient profile created successfully",
+      message: "✅ Patient profile created successfully",
     });
   } catch (error) {
     console.error("Error creating patient profile:", error);
 
     return res.status(500).json({
-      error: "Failed to create patient profile",
+      error: "❌ Failed to create patient profile",
       details: error.message,
     });
   } finally {

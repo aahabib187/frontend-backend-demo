@@ -15,7 +15,7 @@ exports.createDoctorProfile = async (req, res) => {
 
   if (!email || !licenseNumber || !degrees || experienceYears === undefined || !deptId || !branchId) {
     return res.status(400).json({
-      error: "email, licenseNumber, degrees, experienceYears, deptId, and branchId are required",
+      error: "❌ email, licenseNumber, degrees, experienceYears, deptId, and branchId are required",
     });
   }
 
@@ -33,7 +33,7 @@ exports.createDoctorProfile = async (req, res) => {
     console.log("Email received from React:", email);
 
     if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: "Doctor user not found" });
+      return res.status(404).json({ error: "❌ Doctor user not found" });
     }
 
     const userId = userResult.rows[0].ID;
@@ -74,7 +74,7 @@ exports.createDoctorProfile = async (req, res) => {
         existing.LICENSE_NUMBER && existing.DEGREES && existing.EXPERIENCE_YEARS &&
         existing.DEPT_ID && existing.BRANCH_ID
       ) {
-        return res.status(400).json({ error: "Doctor profile already completed" });
+        return res.status(400).json({ error: "❌ Doctor profile already completed" });
       }
 
       // Update missing fields (only overwrite NULL)
@@ -112,14 +112,14 @@ exports.createDoctorProfile = async (req, res) => {
     }
 
     await connection.commit();
-    res.status(201).json({ message: "Doctor profile saved successfully" });
+    res.status(201).json({ message: "✅ Doctor profile saved successfully" });
 
   } catch (err) {
     console.error("Error creating doctor profile:", err);
     if (connection) {
       try { await connection.rollback(); } catch (_) {}
     }
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "❌ Server error" });
   } finally {
     if (connection) {
       try { await connection.close(); } catch (_) {}
@@ -134,7 +134,7 @@ exports.createDoctorProfile = async (req, res) => {
 exports.saveDoctorSpecialization = async (req, res) => {
   const { email, specializationId } = req.body;
   if (!email || !specializationId) {
-    return res.status(400).json({ error: "Email and specializationId are required" });
+    return res.status(400).json({ error: "❌ Email and specializationId are required" });
   }
 
   let connection;
@@ -152,7 +152,7 @@ exports.saveDoctorSpecialization = async (req, res) => {
     );
 
     if (doctorResult.rows.length === 0) {
-      return res.status(404).json({ error: "Doctor not found" });
+      return res.status(404).json({ error: "❌ Doctor not found" });
     }
 
     const doctorId = doctorResult.rows[0].DOCTOR_ID;
@@ -171,11 +171,11 @@ exports.saveDoctorSpecialization = async (req, res) => {
     );
 
     await connection.commit();
-    res.status(200).json({ message: "Specialization saved successfully" });
+    res.status(200).json({ message: "✅ Specialization saved successfully" });
 
   } catch (err) {
     console.error("Error saving doctor specialization:", err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "❌ Server error" });
   } finally {
     if (connection) {
       try { await connection.close(); } catch (_) {}
@@ -209,7 +209,7 @@ exports.getAllSpecializations = async (req, res) => {
 
   } catch (err) {
     console.error("Error fetching specializations:", err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "❌ Server error" });
   } finally {
     if (connection) {
       try { await connection.close(); } catch (_) {}
@@ -228,12 +228,12 @@ exports.createTimeSlots = async (req, res) => {
   // temporary validation
   if (!email || !date || !startTime || !endTime || !interval) {
     return res.status(400).json({
-      error: "email, date, startTime, endTime and interval are required",
+      error: "❌ email, date, startTime, endTime and interval are required",
     });
   }
 
   // For now just confirm request reached backend
   res.status(200).json({
-    message: "Time slot API reached successfully",
+    message: "✅ Time slot API reached successfully",
   });
 };

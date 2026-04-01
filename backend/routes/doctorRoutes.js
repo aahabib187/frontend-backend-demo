@@ -17,16 +17,17 @@ const {
  * ===============================
  */
 
-// GET doctor profile by email (placeholder)
-router.get("/profile/:email", (req, res) => {
-  res.status(501).json({ error: "GET doctor profile not implemented yet" });
-});
+// GET doctor profile by email
+router.get("/profile/:email", doctorProfileController.getDoctorProfile);
 
 // POST — Create new doctor profile
 router.post("/profile/create", createDoctorProfile);
 
 // PUT — Update existing doctor profile
 router.put("/profile/update", doctorProfileController.updateDoctorProfile);
+
+// POST — Save doctor availability
+router.post("/availability/:email", doctorProfileController.saveDoctorAvailability);
 
 /**
  * ===============================

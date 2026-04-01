@@ -9,7 +9,7 @@ exports.login = async (req, res) => {
   // TEST ADMIN LOGIN - Bypass database for demo
   if (email === "admin@test.com" && pass === "admin123") {
     return res.status(200).json({
-      message: "Login successful",
+      message: "✅ Login successful",
       user: {
         id: 1,
         name: "Admin User",
@@ -32,7 +32,7 @@ exports.login = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "❌ User not found" });
     }
 
     const user = result.rows[0];
@@ -48,11 +48,11 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(pass, dbUser.hashedPassword);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid password" });
+      return res.status(401).json({ message: "❌ Invalid password" });
     }
 
     res.status(200).json({
-      message: "Login successful",
+      message: "✅ Login successful",
       user: {
         id: dbUser.id,
         name: dbUser.name,
@@ -63,7 +63,7 @@ exports.login = async (req, res) => {
 
   } catch (err) {
     console.error(" Login error:", err.message);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "❌ " + err.message });
   } finally {
     if (connection) {
       await connection.close();

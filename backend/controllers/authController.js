@@ -16,26 +16,26 @@ exports.signup = async (req, res) => {
   console.log(" Signup request received:", { name, email, phone, role });
 
   if (!name || !email || !pass || !phone || !role) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ error: "❌ All fields are required" });
   }
 
   if (!validateEmail(email)) {
-    return res.status(400).json({ error: "Invalid email format" });
+    return res.status(400).json({ error: "❌ Invalid email format" });
   }
 
   if (!validatePassword(pass)) {
     return res.status(400).json({ 
-      error: "Password must be at least 8 characters with uppercase and number" 
+      error: "❌ Password must be at least 8 characters with uppercase and number" 
     });
   }
 
   if (!/^\d{11}$/.test(phone)) {
-    return res.status(400).json({ error: "Phone must be 11 digits" });
+    return res.status(400).json({ error: "❌ Phone must be 11 digits" });
   }
 
   const validRoles = ["user", "admin", "patient","doctor","staff"];
   if (!validRoles.includes(role.toLowerCase())) {
-    return res.status(400).json({ error: "Invalid role" });
+    return res.status(400).json({ error: "❌ Invalid role" });
   }
   const normalizedRole = role.toUpperCase();
 
@@ -53,7 +53,7 @@ exports.signup = async (req, res) => {
 
     if (duplicateCheck.rows.length > 0) {
       return res.status(409).json({ 
-        error: "User with this name and email already exists" 
+        error: "❌ User with this name and email already exists" 
       });
     }
 
@@ -94,7 +94,16 @@ exports.signup = async (req, res) => {
     }
     await connection.commit();
     console.log("Transaction committed");
-    res.status(201).json({ message: "User created successfully",user: { name, email, phone, role } });
+    res.status(201).json({ 
+      message: "✅ User created successfully",
+      user: { 
+        id: userId,
+        name, 
+        email, 
+        phone, 
+        role: normalizedRole 
+      } 
+    });
 
   } catch (err) {
     console.error("Signup error:", err);
@@ -108,10 +117,10 @@ exports.signup = async (req, res) => {
     }
     if (err.message.includes("UNIQUE constraint") || err.message.includes("ORA-00001")) {
       return res.status(409).json({ 
-        error: "User with this name and email combination already exists" 
+        error: "❌ User with this name and email combination already exists" 
       });
     }
-    res.status(500).json({ error: "Signup failed. Please try again." });
+    res.status(500).json({ error: "❌ Signup failed. Please try again." });
   }finally{
     if(connection)
     {
