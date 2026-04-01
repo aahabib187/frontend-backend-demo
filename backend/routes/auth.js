@@ -8,7 +8,7 @@ const appointmentController = require("../controllers/appointmentController");
 const patientAppointmentsController = require("../controllers/patientAppointments");
 const doctorProfileController = require("../controllers/doctorProfileUpdate");
 const { saveDoctorSpecialization } = require("../controllers/doctorSpecialization"); // Afnan
-const doctorRoutes = require("./doctorRoutes");
+const doctorRoutes = require("./doctorRoutes");//Afnan
 
 
 console.log("auth routes loaded");

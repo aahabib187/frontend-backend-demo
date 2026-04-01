@@ -216,3 +216,24 @@ exports.getAllSpecializations = async (req, res) => {
     }
   }
 };
+
+/**
+ * POST — Create doctor's time slots
+ */
+exports.createTimeSlots = async (req, res) => {
+  const { email, date, startTime, endTime, interval } = req.body;
+
+  console.log("Time slot request received:", req.body);
+
+  // temporary validation
+  if (!email || !date || !startTime || !endTime || !interval) {
+    return res.status(400).json({
+      error: "email, date, startTime, endTime and interval are required",
+    });
+  }
+
+  // For now just confirm request reached backend
+  res.status(200).json({
+    message: "Time slot API reached successfully",
+  });
+};

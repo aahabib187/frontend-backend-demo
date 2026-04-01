@@ -8,6 +8,7 @@ const {
   createDoctorProfile,
   saveDoctorSpecialization,
   getAllSpecializations,
+  createTimeSlots,
 } = require("../controllers/doctorSpecialization"); // ✅ singular, matches your file
 
 /**
@@ -38,5 +39,13 @@ router.post("/specialization", saveDoctorSpecialization);
 
 // GET — Fetch all specializations
 router.get("/specializations", getAllSpecializations);
+
+// POST — Create doctor time slots
+router.post("/timeslots", createTimeSlots);
+
+const { saveDoctorTimeSlots } = require("../controllers/doctorTimeSlots"); // make sure file name matches
+
+// POST — Save doctor time slots
+router.post("/timeslots/save", saveDoctorTimeSlots);
 
 module.exports = router;
