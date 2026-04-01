@@ -9,6 +9,7 @@ const patientAppointmentsController = require("../controllers/patientAppointment
 const doctorProfileController = require("../controllers/doctorProfileUpdate");
 const { saveDoctorSpecialization } = require("../controllers/doctorSpecialization"); // Afnan
 const doctorRoutes = require("./doctorRoutes");//Afnan
+const patientProfileUpdate = require("../controllers/patientProfileUpdate");
 
 
 console.log("auth routes loaded");
@@ -21,6 +22,7 @@ router.get("/doctor/:doctorId/available-slots", appointmentController.getAvailab
 router.post("/appointments/book", appointmentController.bookAppointment);
 router.get("/patient/:email/appointments", patientAppointmentsController.getPatientAppointmentsByEmail);
 router.put("/doctor/profile", doctorProfileController.updateDoctorProfile);
+router.post("/patient-profile", patientProfileUpdate.createPatientProfile);
 
 // ✅ New specialization route
 router.post("/doctor/specialization", saveDoctorSpecialization);
