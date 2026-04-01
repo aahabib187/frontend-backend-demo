@@ -94,7 +94,7 @@ exports.signup = async (req, res) => {
     }
     await connection.commit();
     console.log("Transaction committed");
-    res.status(201).json({ message: "User created successfully",user: { name, email, phone, role } });
+    res.status(201).json({ message: "User created successfully",user: {id: userId, name, email, phone, role } });
 
   } catch (err) {
     console.error("Signup error:", err);

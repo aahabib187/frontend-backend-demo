@@ -17,6 +17,9 @@ console.log("auth routes loaded");
 router.post("/signup", signup);
 router.post("/login",login);
 router.get("/profile/:email", getProfile);
+
+router.get("/patient/profile/:email", patientProfileUpdate.getPatientProfile);//Afnan
+
 router.post("/doctor/setup-schedule", timetableController.saveDoctorSchedule);
 router.get("/doctor/:doctorId/available-slots", appointmentController.getAvailableSlots);
 router.post("/appointments/book", appointmentController.bookAppointment);
