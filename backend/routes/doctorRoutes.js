@@ -18,9 +18,9 @@ const {
  */
 
 // GET doctor profile by email (placeholder)
-router.get("/profile/:email", (req, res) => {
-  res.status(501).json({ error: "GET doctor profile not implemented yet" });
-});
+// GET doctor profile by email
+const { getDoctorProfile } = require("../controllers/doctorProfileGet"); // new controller
+router.get("/profile/:email", getDoctorProfile);
 
 // POST — Create new doctor profile
 router.post("/profile/create", createDoctorProfile);
