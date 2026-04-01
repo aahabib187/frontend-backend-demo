@@ -24,12 +24,16 @@ exports.createPatientProfile = async (req, res) => {
   try {
     connection = await connectDB();
 
-    const sql = `
-      INSERT INTO PATIENT
-      (USER_ID, DATE_OF_BIRTH, GENDER, OCCUPATION, BLOOD_TYPE, MARITAL_STATUS, ADDRESS)
-      VALUES
-      (:userId, :dateOfBirth, :gender, :occupation, :bloodType, :maritalStatus, :address)
-    `;
+    const sql = `UPDATE PATIENT
+SET
+  DATE_OF_BIRTH = :dateOfBirth,
+  GENDER = :gender,
+  OCCUPATION = :occupation,
+  BLOOD_TYPE = :bloodType,
+  MARITAL_STATUS = :maritalStatus,
+  ADDRESS = :address
+WHERE USER_ID = :userId
+      ;`
 
     const binds = {
       userId,
