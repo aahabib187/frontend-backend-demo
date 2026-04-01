@@ -46,7 +46,7 @@ const userEmail = localStorage.getItem("userEmail"); // optional, just for displ
       if (res.ok) {
         setMessage("Specialization saved successfully!");
         // after saving, move to schedule setup page
-        setTimeout(() => navigate("/doctor/schedule/setup"), 1000);
+        setTimeout(() => navigate("/doctor/timeslots"), 1000);
       } else {
         setMessage(data.error || "Failed to save specialization");
       }

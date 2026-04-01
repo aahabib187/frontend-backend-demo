@@ -1,56 +1,117 @@
 import { useEffect, useState } from "react";
 import defaultImg from "../assets/default.png";
-import "../index.css"; // keep your global styles
+import "../index.css"; // global styles
+import { Calendar, dateFnsLocalizer } from "react-big-calendar";
+import { format, parse, startOfWeek, getDay } from "date-fns";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import enUS from "date-fns/locale/en-US";
 
 export default function DoctorDashboard() {
-  const loggedInUser = JSON.parse(localStorage.getItem("user")); // doctor info
-  const savedAvailability = JSON.parse(localStorage.getItem("doctorAvailability")) || {};
-
+  // Doctor state
   const [doctor, setDoctor] = useState({
-    name: loggedInUser?.name || "",
-    license: loggedInUser?.license || "Not provided",
-    specialization: loggedInUser?.specialization || "Not provided",
-    photo: loggedInUser?.photo || null,
+    name: "",
+    license: "Not provided",
+    specialization: "Not provided",
+    photo: null,
   });
 
+  // Availability state
   const [availability, setAvailability] = useState({
-    Sunday: savedAvailability.Sunday || { active: false, start: "10:00", end: "18:00" },
-    Monday: savedAvailability.Monday || { active: false, start: "10:00", end: "18:00" },
-    Tuesday: savedAvailability.Tuesday || { active: false, start: "10:00", end: "18:00" },
-    Wednesday: savedAvailability.Wednesday || { active: false, start: "10:00", end: "18:00" },
-    Thursday: savedAvailability.Thursday || { active: false, start: "10:00", end: "18:00" },
-    Friday: savedAvailability.Friday || { active: false, start: "10:00", end: "18:00" },
-    Saturday: savedAvailability.Saturday || { active: false, start: "10:00", end: "18:00" },
+    Sunday: { active: false, start: "10:00", end: "18:00" },
+    Monday: { active: false, start: "10:00", end: "18:00" },
+    Tuesday: { active: false, start: "10:00", end: "18:00" },
+    Wednesday: { active: false, start: "10:00", end: "18:00" },
+    Thursday: { active: false, start: "10:00", end: "18:00" },
+    Friday: { active: false, start: "10:00", end: "18:00" },
+    Saturday: { active: false, start: "10:00", end: "18:00" },
   });
 
-  const [appointments, setAppointments] = useState([
-    // placeholder, later fetch from backend
-    { id: 1, patientName: "John Doe", date: "2026-04-01", startTime: "10:00", endTime: "10:30", status: "Booked" },
-    { id: 2, patientName: "Jane Smith", date: "2026-04-01", startTime: "11:00", endTime: "11:30", status: "Booked" },
-  ]);
-
+  // Appointments state
+  const [appointments, setAppointments] = useState([]);
   const [message, setMessage] = useState("");
 
-  // handle checkbox / dropdown change
-  const handleAvailabilityChange = (day, field, value) => {
-    setAvailability({
-      ...availability,
-      [day]: { ...availability[day], [field]: field === "active" ? value : value },
-    });
-  };
-
-  const handleSaveAvailability = () => {
-    localStorage.setItem("doctorAvailability", JSON.stringify(availability));
-    setMessage("Availability updated ✅");
-    setTimeout(() => setMessage(""), 3000);
-  };
-
-  // generate time options for dropdown
+  // Time options for dropdown
   const timeOptions = [];
   for (let h = 10; h <= 22; h++) {
     timeOptions.push(h.toString().padStart(2, "0") + ":00");
     timeOptions.push(h.toString().padStart(2, "0") + ":30");
   }
+
+  // Setup calendar localizer
+  const locales = { "en-US": enUS };
+  const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
+
+  // Convert appointments to calendar events
+  const events = appointments.map((appt) => ({
+    id: appt.id,
+    title: `${appt.patientName} (${appt.status})`,
+    start: new Date(`${appt.date}T${appt.startTime}`),
+    end: new Date(`${appt.date}T${appt.endTime}`),
+  }));
+
+  // Fetch doctor profile from backend
+  useEffect(() => {
+    const fetchDoctorProfile = async () => {
+      try {
+        const email = localStorage.getItem("userEmail");
+        if (!email) return;
+
+        const res = await fetch(`http://localhost:3000/api/doctor/profile/${email}`);
+        const data = await res.json();
+
+        if (res.ok) {
+          setDoctor({
+            name: data.name || "",
+            license: data.license || "Not provided",
+            specialization: data.specialization || "Not provided",
+            photo: data.photo || null,
+          });
+
+          // Set availability if present
+          if (data.availability) setAvailability(data.availability);
+
+          // Set appointments if present
+          if (data.appointments) setAppointments(data.appointments);
+        } else {
+          console.error("Failed to fetch doctor profile:", data.error);
+        }
+      } catch (err) {
+        console.error("Error fetching doctor profile:", err);
+      }
+    };
+
+    fetchDoctorProfile();
+  }, []);
+
+  // Handle availability changes
+  const handleAvailabilityChange = (day, field, value) => {
+    setAvailability({
+      ...availability,
+      [day]: { ...availability[day], [field]: value },
+    });
+  };
+
+  // Save availability to backend
+  const handleSaveAvailability = async () => {
+    try {
+      const email = localStorage.getItem("userEmail");
+      const res = await fetch(`http://localhost:3000/api/doctor/availability/${email}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ availability }),
+      });
+      if (res.ok) {
+        setMessage("Availability updated ✅");
+        setTimeout(() => setMessage(""), 3000);
+      } else {
+        const data = await res.json();
+        setMessage(data.error || "Failed to save availability ❌");
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage("Server error ❌");
+    }
+  };
 
   return (
     <div className="container" style={{ padding: "20px" }}>
@@ -125,32 +186,17 @@ export default function DoctorDashboard() {
         {message && <p className="message">{message}</p>}
       </div>
 
-      {/* APPOINTMENTS */}
-      <div className="card fade-in" style={{ maxWidth: "800px", margin: "0 auto 50px auto", padding: "20px" }}>
+      {/* APPOINTMENTS CALENDAR */}
+      <div className="card fade-in" style={{ maxWidth: "900px", margin: "0 auto 50px auto", padding: "20px" }}>
         <div className="accent-stripe"></div>
-        <h2>Booked Appointments</h2>
-        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "15px" }}>
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>Date</th>
-              <th>Start</th>
-              <th>End</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {appointments.map((appt) => (
-              <tr key={appt.id}>
-                <td>{appt.patientName}</td>
-                <td>{appt.date}</td>
-                <td>{appt.startTime}</td>
-                <td>{appt.endTime}</td>
-                <td>{appt.status}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <h2>Upcoming Appointments</h2>
+        <Calendar
+          localizer={localizer}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 500, marginTop: 20 }}
+        />
       </div>
     </div>
   );
