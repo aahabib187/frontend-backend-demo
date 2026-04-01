@@ -6,6 +6,19 @@ exports.login = async (req, res) => {
   const { email, pass } = req.body;
   console.log(" Login request received:", { email });
 
+  // TEST ADMIN LOGIN - Bypass database for demo
+  if (email === "admin@test.com" && pass === "admin123") {
+    return res.status(200).json({
+      message: "Login successful",
+      user: {
+        id: 1,
+        name: "Admin User",
+        email: "admin@test.com",
+        role: "ADMIN",
+      },
+    });
+  }
+
   let connection;
 
   try {
@@ -14,7 +27,7 @@ exports.login = async (req, res) => {
 
     
     const result = await connection.execute(
-      `SELECT NAME, EMAIL, PASS, ROLE FROM USERS WHERE EMAIL = :email`,
+      `SELECT ID, NAME, EMAIL, PASS, ROLE FROM USERS WHERE EMAIL = :email`,
       { email }
     );
 
@@ -24,10 +37,11 @@ exports.login = async (req, res) => {
 
     const user = result.rows[0];
     const dbUser = {
-      name: user[0],
-      email: user[1],
-      hashedPassword: user[2],
-      role: user[3],
+      id: user[0],
+      name: user[1],
+      email: user[2],
+      hashedPassword: user[3],
+      role: user[4],
     };
 
     
@@ -40,6 +54,7 @@ exports.login = async (req, res) => {
     res.status(200).json({
       message: "Login successful",
       user: {
+        id: dbUser.id,
         name: dbUser.name,
         email: dbUser.email,
         role: dbUser.role,

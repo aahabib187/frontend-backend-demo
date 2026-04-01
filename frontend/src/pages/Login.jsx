@@ -34,20 +34,24 @@ export default function Login() {
         return;
       }
 
-      const { role, id: userId } = data.user;
+      const { role } = data.user;
 
       // 2️⃣ Save essential info in localStorage
+      localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("userEmail", data.user.email);
       localStorage.setItem("userRole", role);
-      localStorage.setItem("userId", userId);
 
-      // 3️⃣ Redirect based on role
-      if (role === "DOCTOR") {
+      // 3️⃣ Redirect based on role (case-insensitive)
+      const userRole = role.toUpperCase();
+      
+      if (userRole === "DOCTOR") {
         navigate("/doctor/dashboard");
-      } else if (role === "PATIENT") {
+      } else if (userRole === "PATIENT") {
         navigate("/patient/dashboard");
-      } else if (role === "ADMIN") {
+      } else if (userRole === "ADMIN") {
         navigate("/admin/dashboard");
+      } else {
+        setMessage("Unknown role: " + role);
       }
 
     } catch (err) {
