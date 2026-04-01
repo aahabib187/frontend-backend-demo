@@ -26,6 +26,7 @@ router.post("/appointments/book", appointmentController.bookAppointment);
 router.get("/patient/:email/appointments", patientAppointmentsController.getPatientAppointmentsByEmail);
 router.put("/doctor/profile", doctorProfileController.updateDoctorProfile);
 router.post("/patient-profile", patientProfileUpdate.createPatientProfile);
+router.put("/doctor/update-schedule", timetableController.saveDoctorSchedule);
 
 // ✅ New specialization route
 router.post("/doctor/specialization", saveDoctorSpecialization);
