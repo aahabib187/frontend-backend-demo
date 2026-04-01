@@ -295,3 +295,370 @@ h2 {
 .login-btn:hover {
   background-color: #218838; /* slightly darker green on hover */
 }
+
+/* --- Doctor Dashboard Styles --- */
+root {
+  --sidebar-bg: #0f172a;
+  --main-bg: #f8fafc;
+  --accent-emerald: #10b981;
+  --text-main: #1e293b;
+  --glass-white: rgba(255, 255, 255, 0.9);
+}
+
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--main-bg);
+  font-family: 'Inter', sans-serif;
+}
+
+/* SIDEBAR STYLES */
+.sidebar-new {
+  width: 280px;
+  background: var(--sidebar-bg);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar-logo {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 3rem;
+}
+
+.sidebar-logo span { color: var(--accent-emerald); }
+
+.nav-links { display: flex; flex-direction: column; gap: 0.5rem; flex-grow: 1; }
+
+.nav-item {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 12px 16px;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: 500;
+}
+
+.nav-item.active, .nav-item:hover {
+  background: #1e293b;
+  color: white;
+}
+
+/* MAIN CONTENT */
+.main-content {
+  flex-grow: 1;
+  padding: 3rem;
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.status-badge {
+  background: #dcfce7;
+  color: #166534;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* THE PROFILE GLASS CARD */
+/* Modern Deep Background */
+.dashboard-wrapper {
+  background: radial-gradient(circle at top right, #1a1c2c, #0a0b10);
+  min-height: 100vh;
+  color: #e0e0e0;
+}
+
+/* Premium Glassmorphic Card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05); /* Very subtle white tint */
+  -webkit-backdrop-filter: blur(15px);
+   backdrop-filter: blur(15px); /* The "Frosted" effect */
+ 
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle light border */
+  border-radius: 24px; /* Soft, large corners */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px); /* Interactive lift */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Accent Button: "Professional Purple" */
+.submit-btn {
+  background: linear-gradient(135deg, #7b1fa2, #4a148c);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(123, 31, 162, 0.3);
+}
+
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 2rem;
+}
+
+.avatar-large {
+  width: 90px;
+  height: 90px;
+  border-radius: 20px;
+  object-fit: cover;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.badge-specialty {
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* GRID LAYOUT FOR INFO */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.info-item label {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.info-item p {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.mono { font-family: monospace; font-size: 1.1rem; }
+
+.logout-btn {
+  margin-top: auto; /* pushes it to the bottom */
+  background: #dc2626; /* red */
+  color: white;
+}
+
+.logout-btn:hover {
+  background: #b91c1c;
+}
+
+
+/* Background setup */
+.premium-auth-container {
+  min-height: 100vh;
+  background-color: #05060a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Background Blurs */
+.bg-blur-circle {
+  position: absolute;
+  filter: blur(100px);
+  z-index: 0;
+  border-radius: 50%;
+}
+.circle-1 { width: 400px; height: 400px; background: rgba(123, 31, 162, 0.2); top: -100px; left: -100px; }
+.circle-2 { width: 300px; height: 300px; background: rgba(0, 150, 136, 0.15); bottom: -50px; right: -50px; }
+
+/* The Glass Card */
+.premium-glass-card {
+  z-index: 10;
+  width: 100%;
+  max-width: 450px;
+  background: rgba(255, 255, 255, 0.03);
+   -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 32px;
+  padding: 40px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+  text-align: center;
+}
+
+.premium-logo {
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.subtitle { color: #888; font-size: 0.85rem; margin-top: 5px; }
+
+.auth-title { color: #fff; margin: 30px 0; font-size: 1.8rem; }
+
+/* Inputs */
+.premium-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 20px;
+  border-radius: 12px;
+  color: #fff;
+  margin-bottom: 15px;
+  transition: all 0.3s;
+}
+
+.premium-input:focus {
+  outline: none;
+  border-color: #7b1fa2;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Password Hints */
+.hint-wrapper {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 15px;
+}
+.hint-ok { color: #4caf50; font-size: 0.75rem; font-weight: bold; }
+.hint-no { color: #ff5252; font-size: 0.75rem; opacity: 0.6; }
+
+/* Button */
+.premium-btn {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #7b1fa2 0%, #4a148c 100%);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 0 10px 20px rgba(123, 31, 162, 0.3);
+}
+
+.premium-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px rgba(123, 31, 162, 0.4);
+}
+
+.footer-link p { color: #888; font-size: 0.9rem; margin-top: 25px; }
+.footer-link span { color: #7b1fa2; cursor: pointer; font-weight: bold; }
+
+
+/* 1. Force the container to be exactly the screen height and centered */
+.premium-auth-container {
+  height: 100vh;           /* Exactly the screen height */
+  width: 100vw;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;     /* Center vertically */
+  background: radial-gradient(circle at center, #0f111a 0%, #05060a 100%);
+  overflow: hidden;        /* Prevent accidental scrolling */
+}
+
+/* 2. The Card with a "Premium Hover" */
+.premium-glass-card {
+  width: 90%;
+  max-width: 420px;        /* Slightly slimmer for a vertical "exclusive" feel */
+  background: rgba(255, 255, 255, 0.03);
+   -webkit-backdrop-filter: blur(20px); /* Safari Support */
+  backdrop-filter: blur(20px);
+ 
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 28px;
+  padding: 35px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Smooth spring motion */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+/* 3. The Hover Effect */
+.premium-glass-card:hover {
+  transform: translateY(-8px) scale(1.01); /* Lift up slightly */
+  border: 1px solid rgba(123, 31, 162, 0.4); /* Glow the border purple */
+  box-shadow: 0 20px 40px rgba(123, 31, 162, 0.2); /* Deep purple glow shadow */
+}
+
+/* 4. Keep inputs slightly smaller to fit better in the vertical space */
+.premium-input {
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+/* 1. Global Box Sizing (The most important fix) */
+*, *::before, *::after {
+  box-sizing: border-box; /* This keeps padding INSIDE the width */
+}
+
+/* 2. Update the input style to ensure it respects the card's boundaries */
+.premium-input {
+  width: 100%;             /* Now stays 100% of the card's inner width */
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 16px;      /* Slightly tighter padding for a cleaner look */
+  border-radius: 12px;
+  color: #fff;
+  margin-bottom: 12px;
+  display: block;          /* Ensures no weird inline spacing issues */
+  transition: all 0.3s ease;
+}
+
+/* 3. Refine the Card Padding */
+.premium-glass-card {
+  width: 95%;             /* Fluid width for smaller screens */
+  max-width: 400px;
+  padding: 30px;          /* Balanced padding */
+  overflow: hidden;       /* Safety net to clip any stray edges */
+  /* ... keep your blur and border styles ... */
+}
+
+/* 1. Style the Select box itself */
+.select-styled {
+  background-color: rgba(255, 255, 255, 0.05); /* Match the inputs */
+  color: #fff;
+  cursor: pointer;
+   -webkit-appearance: none;
+  appearance: none; /* Removes the default arrow to replace with a cleaner one */
+ 
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://w3.org' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 15px) center; /* Modern arrow position */
+  padding-right: 40px; /* Space for the arrow */
+}
+
+/* 2. Style the dropdown options (The "White Box" fix) */
+.select-styled option {
+  background-color: #1a1c2c; /* Deep navy background for the list */
+  color: #fff;               /* White text for the list */
+  padding: 10px;
+}
+
+/* 3. Remove the blue highlight on focus in some browsers */
+.select-styled:focus {
+  outline: none;
+  border-color: #7b1fa2;
+  box-shadow: 0 0 0 2px rgba(123, 31, 162, 0.2);
+}

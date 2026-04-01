@@ -1,203 +1,128 @@
 import { useEffect, useState } from "react";
 import defaultImg from "../assets/default.png";
-import "../index.css"; // global styles
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay } from "date-fns";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import enUS from "date-fns/locale/en-US";
+import "../index.css"; // Ensure your new CSS is here
 
 export default function DoctorDashboard() {
-  // Doctor state
-  const [doctor, setDoctor] = useState({
-    name: "",
-    license: "Not provided",
-    specialization: "Not provided",
-    photo: null,
-  });
+  const [doctor, setDoctor] = useState(null); // Start as null to show loading
+  const [loading, setLoading] = useState(true);
 
-  // Availability state
-  const [availability, setAvailability] = useState({
-    Sunday: { active: false, start: "10:00", end: "18:00" },
-    Monday: { active: false, start: "10:00", end: "18:00" },
-    Tuesday: { active: false, start: "10:00", end: "18:00" },
-    Wednesday: { active: false, start: "10:00", end: "18:00" },
-    Thursday: { active: false, start: "10:00", end: "18:00" },
-    Friday: { active: false, start: "10:00", end: "18:00" },
-    Saturday: { active: false, start: "10:00", end: "18:00" },
-  });
-
-  // Appointments state
-  const [appointments, setAppointments] = useState([]);
-  const [message, setMessage] = useState("");
-
-  // Time options for dropdown
-  const timeOptions = [];
-  for (let h = 10; h <= 22; h++) {
-    timeOptions.push(h.toString().padStart(2, "0") + ":00");
-    timeOptions.push(h.toString().padStart(2, "0") + ":30");
-  }
-
-  // Setup calendar localizer
-  const locales = { "en-US": enUS };
-  const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
-
-  // Convert appointments to calendar events
-  const events = appointments.map((appt) => ({
-    id: appt.id,
-    title: `${appt.patientName} (${appt.status})`,
-    start: new Date(`${appt.date}T${appt.startTime}`),
-    end: new Date(`${appt.date}T${appt.endTime}`),
-  }));
-
-  // Fetch doctor profile from backend
   useEffect(() => {
-    const fetchDoctorProfile = async () => {
+    const fetchDoctor = async () => {
       try {
         const email = localStorage.getItem("userEmail");
-        if (!email) return;
+        if (!email) {
+          setLoading(false);
+          return;
+        }
 
         const res = await fetch(`http://localhost:3000/api/doctor/profile/${email}`);
         const data = await res.json();
 
         if (res.ok) {
+          // IMPORTANT: Mapping the API data to our state
           setDoctor({
-            name: data.name || "",
-            license: data.license || "Not provided",
-            specialization: data.specialization || "Not provided",
+            name: data.name || "N/A",
+            email: data.email || "N/A",
+            licenseNumber: data.licenseNumber || "N/A",
+            degrees: data.degrees || "N/A",
+            experienceYears: data.experienceYears || "0",
+            deptId: data.deptId || "N/A",
+            branchId: data.branchId || "N/A",
+            specialization: data.specialization || "General",
             photo: data.photo || null,
           });
-
-          // Set availability if present
-          if (data.availability) setAvailability(data.availability);
-
-          // Set appointments if present
-          if (data.appointments) setAppointments(data.appointments);
-        } else {
-          console.error("Failed to fetch doctor profile:", data.error);
         }
       } catch (err) {
-        console.error("Error fetching doctor profile:", err);
+        console.error("Fetch Error:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchDoctorProfile();
+    fetchDoctor();
   }, []);
 
-  // Handle availability changes
-  const handleAvailabilityChange = (day, field, value) => {
-    setAvailability({
-      ...availability,
-      [day]: { ...availability[day], [field]: value },
-    });
-  };
+  if (loading) {
+    return <div className="loading-screen">Loading Medical Profile...</div>;
+  }
 
-  // Save availability to backend
-  const handleSaveAvailability = async () => {
-    try {
-      const email = localStorage.getItem("userEmail");
-      const res = await fetch(`http://localhost:3000/api/doctor/availability/${email}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ availability }),
-      });
-      if (res.ok) {
-        setMessage("Availability updated ✅");
-        setTimeout(() => setMessage(""), 3000);
-      } else {
-        const data = await res.json();
-        setMessage(data.error || "Failed to save availability ❌");
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage("Server error ❌");
-    }
-  };
+  if (!doctor) {
+    return <div className="error-screen">No doctor profile found. Please log in again.</div>;
+  }
 
   return (
-    <div className="container" style={{ padding: "20px" }}>
-      {/* PROFILE CARD */}
-      <div className="card fade-in" style={{ maxWidth: "500px", margin: "0 auto 30px auto", padding: "20px" }}>
-        <div className="accent-stripe"></div>
-        <div className="logo">⚡ DOC APPOINTER</div>
-        <h2>Doctor Profile</h2>
-        <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <img
-            src={doctor.photo || defaultImg}
-            alt="Doctor"
-            style={{ width: "120px", height: "120px", borderRadius: "50%", objectFit: "cover", marginBottom: "10px" }}
-          />
+    <div className="dashboard-wrapper">
+      {/* PERSISTENT SIDEBAR */}
+      <aside className="sidebar-new">
+        <div className="sidebar-logo">⚕ DOC<span>APPOINTER</span></div>
+        <nav className="nav-links">
+          <button className="nav-item active">Dashboard</button>
+          <button className="nav-item">Booked Appointments</button>
+          <button className="nav-item">Edit Time Slots</button>
+          
+        </nav>
+      </aside>
+<button
+  className="nav-item logout-btn"
+  onClick={() => {
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userId");
+    window.location.href = "/login"; // redirect to login page
+  }}
+>
+  Logout
+</button>
+      {/* MAIN CONTENT AREA */}
+      <main className="main-content">
+        <header className="content-header">
+          <h1>Welcome back, Dr. {doctor.name.split(' ')[0]}</h1>
+          <div className="status-badge">System Active</div>
+        </header>
+
+        <div className="dashboard-grid">
+          {/* PROFILE CARD */}
+          <section className="glass-card profile-section">
+            <div className="profile-header">
+              <img src={doctor.photo || defaultImg} alt="Doctor" className="avatar-large" />
+              <div className="profile-titles">
+                <h2>{doctor.name}</h2>
+                <span className="badge-specialty">{doctor.specialization}</span>
+              </div>
+            </div>
+
+            <div className="info-grid">
+              <div className="info-item">
+                <label>Credentials</label>
+                <p>{doctor.degrees}</p>
+              </div>
+              <div className="info-item">
+                <label>Experience</label>
+                <p>{doctor.experienceYears} Years Practice</p>
+              </div>
+              <div className="info-item">
+                <label>License No.</label>
+                <p className="mono">{doctor.licenseNumber}</p>
+              </div>
+              <div className="info-item">
+                <label>Email Address</label>
+                <p>{doctor.email}</p>
+              </div>
+            </div>
+          </section>
+
+          {/* QUICK STATS SECTION */}
+          <section className="stats-sidebar">
+            <div className="stat-box">
+              <label>  <p>Department ID : {doctor.deptId}</p></label>
+            
+            </div>
+            <div className="stat-box">
+              <label>Branch Office</label>
+              <p>Branch Code: {doctor.branchId}</p>
+            </div>
+          </section>
         </div>
-        <p><strong>Name:</strong> {doctor.name}</p>
-        <p><strong>License:</strong> {doctor.license}</p>
-        <p><strong>Specialization:</strong> {doctor.specialization}</p>
-      </div>
-
-      {/* AVAILABILITY */}
-      <div className="card fade-in" style={{ maxWidth: "700px", margin: "0 auto 30px auto", padding: "20px" }}>
-        <div className="accent-stripe"></div>
-        <h2>Edit Availability</h2>
-        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "15px" }}>
-          <thead>
-            <tr>
-              <th style={{ textAlign: "left" }}>Day</th>
-              <th>Active</th>
-              <th>Start Time</th>
-              <th>End Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.keys(availability).map((day) => (
-              <tr key={day}>
-                <td>{day}</td>
-                <td style={{ textAlign: "center" }}>
-                  <input
-                    type="checkbox"
-                    checked={availability[day].active}
-                    onChange={(e) => handleAvailabilityChange(day, "active", e.target.checked)}
-                  />
-                </td>
-                <td style={{ textAlign: "center" }}>
-                  <select
-                    value={availability[day].start}
-                    onChange={(e) => handleAvailabilityChange(day, "start", e.target.value)}
-                  >
-                    {timeOptions.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
-                </td>
-                <td style={{ textAlign: "center" }}>
-                  <select
-                    value={availability[day].end}
-                    onChange={(e) => handleAvailabilityChange(day, "end", e.target.value)}
-                  >
-                    {timeOptions.map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
-                  </select>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <button className="submit-btn" style={{ marginTop: "15px" }} onClick={handleSaveAvailability}>
-          Save Availability
-        </button>
-        {message && <p className="message">{message}</p>}
-      </div>
-
-      {/* APPOINTMENTS CALENDAR */}
-      <div className="card fade-in" style={{ maxWidth: "900px", margin: "0 auto 50px auto", padding: "20px" }}>
-        <div className="accent-stripe"></div>
-        <h2>Upcoming Appointments</h2>
-        <Calendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: 500, marginTop: 20 }}
-        />
-      </div>
+      </main>
     </div>
   );
 }
