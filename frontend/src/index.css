@@ -663,3 +663,36 @@ root {
   box-shadow: 0 0 0 2px rgba(123, 31, 162, 0.2);
 }
 
+/* --- Patient Booking Styles --- */
+.doctor-detail-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 10px;
+}
+
+.slots-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.slot-btn {
+  padding: 8px 12px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.slot-btn:hover {
+  background: #2563eb;
+}
+
+.booking-msg {
+  margin-top: 1rem;
+  font-weight: bold;
+}

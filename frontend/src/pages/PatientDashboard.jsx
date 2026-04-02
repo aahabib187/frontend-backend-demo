@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import defaultImg from "../assets/default.png";
-import "../index.css"; 
+import "../index.css";
+import { useNavigate } from "react-router-dom";
 
 export default function PatientDashboard() {
   const [patient, setPatient] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPatient = async () => {
@@ -20,7 +22,7 @@ export default function PatientDashboard() {
         // Try fetching by userId first as it's more reliable after setup
         const identifier = userId || email;
         const res = await fetch(`http://localhost:3000/api/patient/profile/${email}`);
-        
+
         if (!res.ok) {
           throw new Error("Profile not found");
         }
@@ -49,7 +51,7 @@ export default function PatientDashboard() {
   }, []);
 
   if (loading) return <div className="loading-screen">Loading Patient Profile...</div>;
-  
+
   if (!patient) return (
     <div className="error-screen">
       <h2>No patient profile found.</h2>
@@ -63,8 +65,11 @@ export default function PatientDashboard() {
       <aside className="sidebar-new">
         <div className="sidebar-logo">⚕ DOC<span>APPOINTER</span></div>
         <nav className="nav-links">
-          <button className="nav-item active">Upcoming Appointments</button>
-          <button className="nav-item">Book New Appointment</button>
+          <button className="nav-item active"   onClick={() => navigate("/patient/upcoming")}>Upcoming Appointments</button>
+          <button
+            className="nav-item"
+            onClick={() => navigate("/patient/book")}
+          >Book New Appointment</button>
           <button className="nav-item">Prescription</button>
         </nav>
         <button

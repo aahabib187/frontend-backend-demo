@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function DoctorDashboard() {
   const [doctor, setDoctor] = useState(null); // Start as null to show loading
   const [loading, setLoading] = useState(true);
-const navigate = useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchDoctor = async () => {
       try {
@@ -22,6 +22,7 @@ const navigate = useNavigate();
         if (res.ok) {
           // IMPORTANT: Mapping the API data to our state
           setDoctor({
+            id: data.id,
             name: data.name || "N/A",
             email: data.email || "N/A",
             licenseNumber: data.licenseNumber || "N/A",
@@ -58,24 +59,40 @@ const navigate = useNavigate();
         <div className="sidebar-logo">⚕ DOC<span>APPOINTER</span></div>
         <nav className="nav-links">
           <button className="nav-item active">Dashboard</button>
-          <button className="nav-item">Booked Appointments</button>
          <button 
-  className="nav-item"
-  onClick={() => navigate("/doctor/timeslots")}
->Edit Time Slots</button>
-          
-        </nav>
-      </aside>
-<button
-  className="nav-item logout-btn"
+  className="nav-item" 
   onClick={() => {
-    localStorage.removeItem("userEmail");
-    localStorage.removeItem("userId");
-    window.location.href = "/login"; // redirect to login page
+    // Your backend sends 'id' lowercase in the getDoctorProfile response
+    const id = doctor?.id; 
+
+    if (!id) {
+      alert("Doctor ID not found in profile! Check console.");
+      console.log("Current doctor state:", doctor);
+      return;
+    }
+
+    navigate(`/doctor/schedule/${id}`);
   }}
 >
-  Logout
+  Booked Appointments
 </button>
+          <button
+            className="nav-item"
+            onClick={() => navigate("/doctor/timeslots")}
+          >Edit Time Slots</button>
+
+        </nav>
+      </aside>
+      <button
+        className="nav-item logout-btn"
+        onClick={() => {
+          localStorage.removeItem("userEmail");
+          localStorage.removeItem("userId");
+          window.location.href = "/login"; // redirect to login page
+        }}
+      >
+        Logout
+      </button>
       {/* MAIN CONTENT AREA */}
       <main className="main-content">
         <header className="content-header">
@@ -118,7 +135,7 @@ const navigate = useNavigate();
           <section className="stats-sidebar">
             <div className="stat-box">
               <label>  <p>Department ID : {doctor.deptId}</p></label>
-            
+
             </div>
             <div className="stat-box">
               <label>Branch Office</label>
