@@ -38,7 +38,7 @@ exports.createPatientProfile = async (req, res) => {
       MARITAL_STATUS = :maritalStatus,
       ADDRESS = :address
   WHEN NOT MATCHED THEN
-      INSERT INTO PATIENT
+      INSERT
       (USER_ID, DATE_OF_BIRTH, GENDER, OCCUPATION, BLOOD_TYPE, MARITAL_STATUS, ADDRESS)
       VALUES
       (:userId, :dateOfBirth, :gender, :occupation, :bloodType, :maritalStatus, :address)
