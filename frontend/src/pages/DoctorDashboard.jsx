@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import defaultImg from "../assets/default.png";
 import "../index.css"; // Ensure your new CSS is here
+import { useNavigate } from "react-router-dom";
 
 export default function DoctorDashboard() {
   const [doctor, setDoctor] = useState(null); // Start as null to show loading
   const [loading, setLoading] = useState(true);
-
+const navigate = useNavigate();
   useEffect(() => {
     const fetchDoctor = async () => {
       try {
@@ -58,7 +59,10 @@ export default function DoctorDashboard() {
         <nav className="nav-links">
           <button className="nav-item active">Dashboard</button>
           <button className="nav-item">Booked Appointments</button>
-          <button className="nav-item">Edit Time Slots</button>
+         <button 
+  className="nav-item"
+  onClick={() => navigate("/doctor/timeslots")}
+>Edit Time Slots</button>
           
         </nav>
       </aside>

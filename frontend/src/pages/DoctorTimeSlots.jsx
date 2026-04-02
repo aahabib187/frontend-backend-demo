@@ -1,8 +1,10 @@
 import { useState } from "react";
 import AuthLayout from "../components/AuthLayout";
+import { useNavigate } from "react-router-dom"; 
 import "../index.css";
 
 export default function DoctorTimeSlots() {
+   const navigate = useNavigate();
   const email = localStorage.getItem("userEmail");
 
   const [currentSlot, setCurrentSlot] = useState({
@@ -58,6 +60,7 @@ export default function DoctorTimeSlots() {
       if (res.ok) {
         setMessage("✅ All time slots saved successfully");
         setTimeSlots([]);
+          navigate("/doctor/dashboard");
       } else {
         setMessage(data.error || "❌ Failed to save");
       }
