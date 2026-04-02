@@ -17,15 +17,10 @@ const {
  * ===============================
  */
 
-<<<<<<< HEAD
 // GET doctor profile by email (placeholder)
 // GET doctor profile by email
 const { getDoctorProfile } = require("../controllers/doctorProfileGet"); // new controller
 router.get("/profile/:email", getDoctorProfile);
-=======
-// GET doctor profile by email
-router.get("/profile/:email", doctorProfileController.getDoctorProfile);
->>>>>>> 2100aeea9bb9c021da50e141acf7f6cfdba25c24
 
 // POST — Create new doctor profile
 router.post("/profile/create", createDoctorProfile);

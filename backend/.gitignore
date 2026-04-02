@@ -1,3 +1,5 @@
 node_modules/
 .env
 .DS_Store
+# ignore local Oracle connection
+backend/db/connection.js
