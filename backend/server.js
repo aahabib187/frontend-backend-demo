@@ -49,3 +49,7 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+//Appointment Routes
+const appointmentRoutes = require("./routes/appointmentRoutes");
+app.use("/api", appointmentRoutes);

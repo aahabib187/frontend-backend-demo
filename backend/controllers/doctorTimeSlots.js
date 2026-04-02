@@ -88,14 +88,7 @@ await connection.execute(
 
         const timeSlotId = result.outBinds.slotId[0];
 
-        // 5️⃣ Insert corresponding entry into DOCTORS_APPOINTMENTS
-        await connection.execute(
-          `INSERT INTO DOCTORS_APPOINTMENTS
-             (DOCTOR_ID, TIME_SLOT_ID, APPOINTMENT_DATE, STATUS, TYPE)
-           VALUES
-             (:doctorId, :slotId, NULL, 'AVAILABLE', :type)`,
-          { doctorId, slotId: timeSlotId, type: "GENERAL" }
-        );
+       
       }
     }
 

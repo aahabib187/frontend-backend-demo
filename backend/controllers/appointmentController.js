@@ -1,4 +1,5 @@
 const connectDB = require("../db/connection");
+const oracledb = require("oracledb");
 
 const getDayName = (dateString) => {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -136,6 +137,15 @@ exports.bookAppointment = async (req, res) => {
         type: type || "General"
       }
     );
+    // Update the time slot status to BOOKED
+await connection.execute(
+  `UPDATE TIME_SLOTS
+     SET STATUS = 'BOOKED',
+         LAST_EDITED_AT = SYSDATE
+   WHERE ID = :timeSlotId
+     AND DOCTOR_ID = :doctorId`,
+  { timeSlotId, doctorId }
+);
 
     await connection.commit();
 
@@ -156,3 +166,71 @@ exports.bookAppointment = async (req, res) => {
     if (connection) await connection.close();
   }
 };
+
+//Afnan . To see upcoming Appointments
+// Afnan . Updated to find the correct PATIENT_ID
+exports.getUpcomingAppointments = async (req, res) => {
+  const { patientEmail } = req.query;
+  if (!patientEmail) return res.status(400).json({ error: "❌ Patient email required" });
+
+  let connection;
+  try {
+    connection = await connectDB();
+
+    // 1. Get the USER ID first
+    const userResult = await connection.execute(
+      `SELECT ID FROM USERS 
+       WHERE TRIM(LOWER(EMAIL)) = TRIM(LOWER(:email)) 
+       AND TRIM(UPPER(ROLE)) = 'PATIENT'`,
+      { email: patientEmail }
+    );
+
+    if (userResult.rows.length === 0)
+      return res.status(404).json({ error: "❌ Patient user not found" });
+
+    const userId = userResult.rows[0][0];
+
+    // 2. IMPORTANT: Get the ID from the PATIENT table using the USER_ID
+    const patientResult = await connection.execute(
+      `SELECT ID FROM PATIENT WHERE USER_ID = :userId`,
+      { userId }
+    );
+
+    if (patientResult.rows.length === 0)
+      return res.status(404).json({ error: "❌ Patient profile not found" });
+
+    const actualPatientId = patientResult.rows[0][0]; // This is the ID used in DOCTORS_APPOINTMENTS
+
+    // 3. Fetch upcoming appointments using actualPatientId
+    const result = await connection.execute(
+      `SELECT 
+         a.ID AS APPOINTMENT_ID,
+         a.APPOINTMENT_DATE,
+         ts.START_TIME,
+         ts.END_TIME,
+         u.NAME AS DOCTOR_NAME,
+         d.DEGREES,
+         s.NAME AS SPECIALIZATION
+       FROM DOCTORS_APPOINTMENTS a
+       JOIN DOCTOR d ON a.DOCTOR_ID = d.ID
+       JOIN USERS u ON d.USER_ID = u.ID
+       LEFT JOIN DOC_SPECIALIZATION ds ON ds.DOCTOR_ID = d.ID
+       LEFT JOIN SPECIALIZATION s ON s.ID = ds.SPECIALIZATION_ID
+       JOIN TIME_SLOTS ts ON ts.ID = a.TIME_SLOT_ID
+       WHERE a.PATIENT_ID = :patientId -- Now matches the ID in the table
+         AND TRIM(UPPER(a.STATUS)) = 'BOOKED'
+       ORDER BY a.APPOINTMENT_DATE, ts.START_TIME`,
+      { patientId: actualPatientId },
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+
+    return res.status(200).json(result.rows);
+  } catch (err) {
+    console.error("Get upcoming appointments error:", err);
+    return res.status(500).json({ error: "❌ Failed to fetch upcoming appointments" });
+  } finally {
+    if (connection) await connection.close();
+  }
+};
+
+//Afnan

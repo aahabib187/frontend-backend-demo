@@ -51,4 +51,11 @@ const { saveDoctorTimeSlots } = require("../controllers/doctorTimeSlots"); // ma
 // POST — Save doctor time slots
 router.post("/timeslots/save", saveDoctorTimeSlots);
 
+const doctorUpcoming = require("../controllers/doctorUpcoming"); 
+// GET — Fetch appointments for a doctor by email
+router.get("/schedule/:doctorId", doctorUpcoming.getDoctorSchedule);
+
+console.log("Is controller defined?", doctorUpcoming.getDoctorSchedule);
+
+
 module.exports = router;
