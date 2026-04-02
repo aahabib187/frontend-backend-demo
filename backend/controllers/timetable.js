@@ -24,17 +24,18 @@ const minutesToTime = (totalMinutes) => {
   return `${hours}:${minutes}`;
 };
 
-const generate25MinSlots = (startTime, endTime) => {
+const generateAppointmentSlots = (startTime, endTime, intervalMinutes = 25) => {
   const slots = [];
   let current = timeToMinutes(startTime);
   const end = timeToMinutes(endTime);
+  const interval = parseInt(intervalMinutes) || 25; // Default 25 minutes if not provided
 
-  while (current + 25 <= end) {
+  while (current + interval <= end) {
     slots.push({
       startTime: minutesToTime(current),
-      endTime: minutesToTime(current + 25)
+      endTime: minutesToTime(current + interval)
     });
-    current += 25;
+    current += interval;
   }
 
   return slots;
@@ -46,7 +47,7 @@ exports.saveDoctorSchedule = async (req, res) => {
   console.log("Save doctor schedule request received:", { email, schedule });
 
   if (!email || !schedule) {
-    return res.status(400).json({ error: "Email and schedule are required" });
+    return res.status(400).json({ error: "❌ Email and schedule are required" });
   }
 
   let connection;
@@ -65,7 +66,7 @@ exports.saveDoctorSchedule = async (req, res) => {
     );
 
     if (userResult.rows.length === 0) {
-      return res.status(404).json({ error: "Doctor user not found" });
+      return res.status(404).json({ error: "❌ Doctor user not found" });
     }
 
     const userId = userResult.rows[0][0];
@@ -78,7 +79,7 @@ exports.saveDoctorSchedule = async (req, res) => {
     );
 
     if (doctorResult.rows.length === 0) {
-      return res.status(404).json({ error: "Doctor profile not found" });
+      return res.status(404).json({ error: "❌ Doctor profile not found" });
     }
 
     const doctorId = doctorResult.rows[0][0];
@@ -92,40 +93,45 @@ exports.saveDoctorSchedule = async (req, res) => {
 
     console.log("Old schedule deleted");
 
+    let totalSlotsCreated = 0;
     
     for (const day of Object.keys(schedule)) {
       const dayData = schedule[day];
 
       if (!validDays.includes(day)) {
         await connection.rollback();
-        return res.status(400).json({ error: `Invalid day: ${day}` });
+        return res.status(400).json({ error: `❌ Invalid day: ${day}` });
       }
 
       if (dayData.selected) {
-        const { startTime, endTime } = dayData;
+        const { startTime, endTime, interval } = dayData;
 
         if (!startTime || !endTime) {
           await connection.rollback();
           return res.status(400).json({
-            error: `Start time and end time are required for ${day}`
+            error: `❌ Start time and end time are required for ${day}`
           });
         }
 
         if (!isValidTime(startTime) || !isValidTime(endTime)) {
           await connection.rollback();
           return res.status(400).json({
-            error: `Invalid time format for ${day}. Use HH:MM in 24-hour format`
+            error: `❌ Invalid time format for ${day}. Use HH:MM in 24-hour format`
           });
         }
 
         if (startTime >= endTime) {
           await connection.rollback();
           return res.status(400).json({
-            error: `Start time must be earlier than end time for ${day}`
+            error: `❌ Start time must be earlier than end time for ${day}`
           });
         }
 
-        const slots = generate25MinSlots(startTime, endTime);
+        // Use provided interval or default to 25 minutes
+        const appointmentInterval = interval || 25;
+        const slots = generateAppointmentSlots(startTime, endTime, appointmentInterval);
+        
+        console.log(`📅 ${day}: Generated ${slots.length} slots from ${startTime} to ${endTime} (${appointmentInterval} min intervals)`);
 
         for (const slot of slots) {
           await connection.execute(
@@ -141,6 +147,7 @@ exports.saveDoctorSchedule = async (req, res) => {
               day
             }
           );
+          totalSlotsCreated++;
         }
 
         
@@ -151,7 +158,8 @@ exports.saveDoctorSchedule = async (req, res) => {
     console.log("Doctor schedule saved successfully");
 
     return res.status(200).json({
-      message: "Doctor schedule saved successfully"
+      message: `✅ Doctor schedule saved successfully! Created ${totalSlotsCreated} appointment slots.`,
+      slotsCreated: totalSlotsCreated
     });
   } catch (err) {
     console.error("Save schedule error:", err);
@@ -165,7 +173,7 @@ exports.saveDoctorSchedule = async (req, res) => {
       }
     }
 
-    return res.status(500).json({ error: "Failed to save doctor schedule" });
+    return res.status(500).json({ error: "❌ Failed to save doctor schedule" });
   } finally {
     if (connection) {
       await connection.close();

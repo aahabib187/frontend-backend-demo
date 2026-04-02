@@ -15,7 +15,7 @@ exports.getProfile = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "❌ User not found" });
     }
 
     const user = result.rows[0];
@@ -27,7 +27,7 @@ exports.getProfile = async (req, res) => {
     });
 
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "❌ " + err.message });
   } finally {
     if (connection) await connection.close();
   }

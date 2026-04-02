@@ -1,20 +1,38 @@
 require('dotenv').config();
 const express = require('express');
-const oracledb = require('oracledb');
-const cors =require('cors');
-const authRoutes = require('./routes/auth');
+const cors = require('cors');
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
+
+// Routes
+const authRoutes = require('./routes/auth');
+const doctorRoutes = require('./routes/doctorRoutes');
+const prescriptionRoutes = require('./routes/prescriptionRoutes');
+
+let adminRoutes;
+try {
+  adminRoutes = require('./routes/adminRoutes');
+  console.log('✅ Admin routes loaded successfully');
+} catch (error) {
+  console.error('❌ Error loading admin routes:', error.message);
+  console.error(error.stack);
+}
+
 app.use('/api', authRoutes);
+app.use('/api/doctor', doctorRoutes);
+app.use('/api/prescriptions', prescriptionRoutes);
 
-const doctorRoutes = require("./routes/doctorRoutes");
-app.use("/api/doctor", doctorRoutes); // now /api/getSpecializations works
+if (adminRoutes) {
+  app.use('/api/admin', adminRoutes);
+  console.log('✅ Admin routes mounted at /api/admin');
+}
 
+// Test route
 const connectDB = require('./db/connection');
-
 app.get('/test', async (req, res) => {
   try {
     const connection = await connectDB();
@@ -27,6 +45,7 @@ app.get('/test', async (req, res) => {
 });
 
 // Start server
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000');
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });

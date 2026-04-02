@@ -15,7 +15,7 @@ exports.createPatientProfile = async (req, res) => {
   
   if (!userId) {
     return res.status(400).json({
-      error: "userId is required",
+      error: "❌ userId is required",
     });
   }
 
@@ -23,6 +23,7 @@ exports.createPatientProfile = async (req, res) => {
 
   try {
     connection = await connectDB();
+
 
     const sql = `
       MERGE INTO PATIENT p
@@ -42,6 +43,7 @@ exports.createPatientProfile = async (req, res) => {
       VALUES
       (:userId, :dateOfBirth, :gender, :occupation, :bloodType, :maritalStatus, :address)
     `;
+
 
     const binds = {
       userId: Number(userId),
@@ -66,7 +68,7 @@ return res.status(201).json({
     console.error("Error creating patient profile:", error);
 
     return res.status(500).json({
-      error: "Failed to create patient profile",
+      error: "❌ Failed to create patient profile",
       details: error.message,
     });
   } finally {
