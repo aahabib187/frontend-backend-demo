@@ -1,4 +1,5 @@
 const connectDB = require('../db/connection');
+const oracledb = require("oracledb");
 
 /**
  * Create a new prescription with medicines
@@ -94,7 +95,7 @@ exports.createPrescription = async (req, res) => {
         :diagnosis,
         :history,
         :instructions,
-        :visitAgainAt
+        TO_DATE(:visitAgainAt, 'YYYY-MM-DD')
       ) RETURNING ID INTO :prescriptionId`,
       {
         appointmentId,
@@ -105,7 +106,7 @@ exports.createPrescription = async (req, res) => {
         history: history || null,
         instructions: instructions || null,
         visitAgainAt: visitAgainAt || null,
-        prescriptionId: { dir: connectDB.oracledb.BIND_OUT, type: connectDB.oracledb.NUMBER }
+        prescriptionId: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER }
       }
     );
 
@@ -460,7 +461,11 @@ exports.updatePrescription = async (req, res) => {
         DIAGNOSIS = :diagnosis,
         HISTORY = :history,
         INSTRUCTIONS = :instructions,
-        VISIT_AGAIN_AT = :visitAgainAt
+        VISIT_AGAIN_AT = CASE
+  WHEN :visitAgainAt IS NOT NULL AND TRIM(:visitAgainAt) <> ''
+  THEN TO_DATE(:visitAgainAt, 'YYYY-MM-DD')
+  ELSE NULL
+END
       WHERE ID = :id`,
       {
         id,
