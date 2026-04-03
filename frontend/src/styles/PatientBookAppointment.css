@@ -1,0 +1,406 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── ROOT ─────────────────────────────────────── */
+.pba-root {
+  display: flex;
+  min-height: 100vh;
+  background: #0b0c0f;
+  color: #e8e2d5;
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+}
+
+/* ── LOADING ──────────────────────────────────── */
+.pba-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: #0b0c0f;
+  font-size: 11px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(196, 163, 100, 0.5);
+}
+
+/* ── SIDEBAR ─────────────────────────────────── */
+.pba-sidebar {
+  width: 260px;
+  min-height: 100vh;
+  background: #0e0f13;
+  border-right: 1px solid rgba(196, 163, 100, 0.15);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 10;
+}
+
+.pba-logo {
+  padding: 36px 28px 32px;
+  border-bottom: 1px solid rgba(196, 163, 100, 0.12);
+}
+
+.pba-logo-symbol {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: #c4a364;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.pba-logo-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: #e8e2d5;
+  line-height: 1;
+}
+
+.pba-logo-name span {
+  color: #c4a364;
+}
+
+.pba-nav {
+  flex: 1;
+  padding: 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pba-nav-label {
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(196, 163, 100, 0.5);
+  padding: 0 28px;
+  margin-bottom: 10px;
+}
+
+.pba-nav-btn {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 28px;
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: rgba(232, 226, 213, 0.55);
+  transition: all 0.2s ease;
+  border-left: 2px solid transparent;
+}
+
+.pba-nav-btn:hover {
+  color: #e8e2d5;
+  background: rgba(196, 163, 100, 0.05);
+  border-left-color: rgba(196, 163, 100, 0.3);
+}
+
+.pba-nav-btn.active {
+  color: #c4a364;
+  background: rgba(196, 163, 100, 0.08);
+  border-left-color: #c4a364;
+}
+
+.pba-nav-icon {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.pba-sidebar-footer {
+  padding: 20px 28px 32px;
+  border-top: 1px solid rgba(196, 163, 100, 0.12);
+}
+
+.pba-logout-btn {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Jost', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(232, 226, 213, 0.35);
+  transition: color 0.2s;
+}
+
+.pba-logout-btn:hover {
+  color: #c4a364;
+}
+
+/* ── MAIN ────────────────────────────────────── */
+.pba-main {
+  margin-left: 260px;
+  flex: 1;
+  padding: 0 48px 60px;
+  min-height: 100vh;
+}
+
+.pba-header {
+  padding: 48px 0 32px;
+  border-bottom: 1px solid rgba(196, 163, 100, 0.15); /* Slightly stronger luxury gold border */
+  margin-bottom: 40px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  /* subtle glass effect */
+  background: linear-gradient(to right, rgba(196, 163, 100, 0.02), transparent);
+}
+
+.pba-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pba-header-label {
+  font-size: 11px; /* Increased slightly for elite readability */
+  font-weight: 700;
+  letter-spacing: 0.4em; /* Ultra-wide spacing for that "high-fashion" feel */
+  text-transform: uppercase;
+  color: #c4a364; /* Signature Luxury Gold */
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+
+/* Optional: Add a subtle glow to the label to make it "pop" on dark backgrounds */
+.pba-header-label:hover {
+  color: #d4b884;
+  text-shadow: 0 0 12px rgba(196, 163, 100, 0.3);
+  transition: all 0.4s ease;
+}
+
+
+.pba-header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: #e8e2d5;
+  line-height: 1;
+}
+
+/* ── FILTER BAR ──────────────────────────────── */
+.pba-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 36px;
+}
+
+.pba-filter-label {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(196, 163, 100, 0.55);
+  white-space: nowrap;
+}
+
+.pba-filter-select {
+  all: unset;
+  background: #0e0f13;
+  border: 1px solid rgba(196, 163, 100, 0.2);
+  border-radius: 2px;
+  padding: 10px 16px;
+  font-family: 'Jost', sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  color: #e8e2d5;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  min-width: 220px;
+  transition: border-color 0.2s;
+}
+
+.pba-filter-select:hover,
+.pba-filter-select:focus {
+  border-color: rgba(196, 163, 100, 0.5);
+  outline: none;
+}
+
+.pba-filter-divider {
+  flex: 1;
+  height: 1px;
+  background: rgba(196, 163, 100, 0.08);
+}
+
+.pba-results-count {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: rgba(196, 163, 100, 0.45);
+  white-space: nowrap;
+}
+
+/* ── DOCTOR GRID ─────────────────────────────── */
+.pba-doctor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.pba-empty {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 300;
+  color: rgba(232, 226, 213, 0.25);
+  padding: 60px 0;
+  text-align: center;
+  grid-column: 1 / -1;
+  letter-spacing: 0.04em;
+}
+
+/* ── DOCTOR CARD ─────────────────────────────── */
+.pba-doctor-card {
+  background: #0e0f13;
+  border: 1px solid rgba(196, 163, 100, 0.12);
+  border-radius: 2px;
+  padding: 28px;
+  cursor: pointer;
+  transition: border-color 0.22s ease, background 0.22s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.pba-doctor-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(196, 163, 100, 0), transparent);
+  transition: background 0.3s ease;
+}
+
+.pba-doctor-card:hover {
+  border-color: rgba(196, 163, 100, 0.35);
+  background: #101117;
+}
+
+.pba-doctor-card:hover::before {
+  background: linear-gradient(90deg, transparent, #c4a364, transparent);
+  opacity: 0.5;
+}
+
+.pba-card-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.pba-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.pba-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(196, 163, 100, 0.25);
+}
+
+.pba-avatar-ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 1px solid rgba(196, 163, 100, 0.1);
+}
+
+.pba-doctor-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #e8e2d5;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+}
+
+.pba-doctor-degrees {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: rgba(232, 226, 213, 0.4);
+}
+
+.pba-card-divider {
+  height: 1px;
+  background: rgba(196, 163, 100, 0.08);
+  margin-bottom: 16px;
+}
+
+.pba-doctor-exp {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(196, 163, 100, 0.55);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pba-doctor-exp::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 1px;
+  background: #c4a364;
+  opacity: 0.4;
+}
+
+.pba-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pba-badge {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(196, 163, 100, 0.7);
+  border: 1px solid rgba(196, 163, 100, 0.2);
+  padding: 4px 10px;
+  border-radius: 1px;
+  transition: all 0.2s;
+}
+
+.pba-doctor-card:hover .pba-badge {
+  border-color: rgba(196, 163, 100, 0.4);
+  color: #c4a364;
+}
+
+.pba-card-arrow {
+  position: absolute;
+  bottom: 20px;
+  right: 22px;
+  font-size: 16px;
+  color: rgba(196, 163, 100, 0.2);
+  transition: color 0.2s, transform 0.2s;
+}
+
+.pba-doctor-card:hover .pba-card-arrow {
+  color: #c4a364;
+  transform: translateX(3px);
+}
