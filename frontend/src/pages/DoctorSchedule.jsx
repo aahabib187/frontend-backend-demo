@@ -11,6 +11,29 @@ export default function DoctorSchedule() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const markAppointmentDone = async (appointmentId) => {
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/doctor/appointment/${appointmentId}/done`,
+      {
+        method: "PATCH",
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to mark appointment done");
+    }
+
+    // remove from UI instantly
+    setAppointments((prev) =>
+      prev.filter((a) => a.APPOINTMENT_ID !== appointmentId)
+    );
+
+  } catch (err) {
+    console.error("Mark done error:", err);
+  }
+};
+
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
@@ -122,7 +145,7 @@ export default function DoctorSchedule() {
                       <FileText size={13} />
                       Prescription
                     </button>
-                    <button className="ds-btn ds-btn-done">
+                    <button className="ds-btn ds-btn-done" onClick={() => markAppointmentDone(app.APPOINTMENT_ID)}>
                       <CheckCircle size={13} />
                       Mark Done
                     </button>

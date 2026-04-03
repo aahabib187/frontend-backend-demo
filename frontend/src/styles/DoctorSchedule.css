@@ -416,3 +416,8 @@
     display: none;
   }
 }
+
+.ds-card::before,
+.ds-card::after {
+  pointer-events: none; /* allow clicks to pass through */
+}
