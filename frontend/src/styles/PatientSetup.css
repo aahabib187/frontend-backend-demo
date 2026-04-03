@@ -1,0 +1,303 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
+
+:root {
+  --navy-deep: #080d1a;
+  --navy-mid: #0e1829;
+  --navy-surface: #131f35;
+  --navy-elevated: #192843;
+  --gold: #c9a84c;
+  --gold-light: #e2c97e;
+  --gold-dim: rgba(201, 168, 76, 0.12);
+  --gold-border: rgba(201, 168, 76, 0.25);
+  --gold-border-hover: rgba(201, 168, 76, 0.55);
+  --text-primary: #f0ead8;
+  --text-secondary: #9ba8bb;
+  --text-muted: #5c6b80;
+  --error: #e07070;
+  --error-dim: rgba(224, 112, 112, 0.12);
+  --success: #6ec4a0;
+  --success-dim: rgba(110, 196, 160, 0.12);
+  --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ── Page Shell ── */
+.ps-page {
+  min-height: 100vh;
+  background: var(--navy-deep);
+  background-image:
+    radial-gradient(ellipse 50% 40% at 20% 5%,  rgba(201,168,76,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 60% at 85% 95%, rgba(8,13,26,0.95)    0%, transparent 70%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 60px 24px 80px;
+  font-family: 'Jost', sans-serif;
+  color: var(--text-primary);
+}
+
+/* ── Card ── */
+.ps-card {
+  width: 100%;
+  max-width: 580px;
+  background: var(--navy-surface);
+  border: 1px solid var(--gold-border);
+  border-radius: 4px;
+  box-shadow: 0 12px 60px rgba(0,0,0,0.5);
+  overflow: hidden;
+  animation: fadeUp 0.55s var(--transition) both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── Card Header ── */
+.ps-card-header {
+  padding: 40px 44px 32px;
+  border-bottom: 1px solid var(--gold-border);
+  position: relative;
+  background: linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 60%);
+}
+
+.ps-card-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 44px;
+  width: 40px;
+  height: 2px;
+  background: var(--gold);
+}
+
+.ps-eyebrow {
+  display: block;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.ps-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 1.15;
+  margin: 0 0 4px;
+  color: var(--text-primary);
+}
+
+.ps-title em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+.ps-subtitle {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-muted);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* ── Form Body ── */
+.ps-form {
+  padding: 36px 44px 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Field Group ── */
+.ps-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: fieldReveal 0.45s var(--transition) both;
+}
+
+.ps-field:nth-child(1) { animation-delay: 0.08s; }
+.ps-field:nth-child(2) { animation-delay: 0.13s; }
+.ps-field:nth-child(3) { animation-delay: 0.18s; }
+.ps-field:nth-child(4) { animation-delay: 0.23s; }
+.ps-field:nth-child(5) { animation-delay: 0.28s; }
+.ps-field:nth-child(6) { animation-delay: 0.33s; }
+
+@keyframes fieldReveal {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0);     }
+}
+
+.ps-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color 0.25s ease;
+}
+
+.ps-field:focus-within .ps-label {
+  color: var(--gold);
+}
+
+/* ── Inputs ── */
+.ps-input,
+.ps-select,
+.ps-textarea {
+  background: var(--navy-mid);
+  border: 1px solid rgba(201,168,76,0.18);
+  border-radius: 3px;
+  padding: 13px 16px;
+  font-family: 'Jost', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-primary);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition:
+    border-color 0.25s ease,
+    background   0.25s ease,
+    box-shadow   0.25s ease;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.ps-input::placeholder,
+.ps-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.ps-input:focus,
+.ps-select:focus,
+.ps-textarea:focus {
+  border-color: var(--gold-border-hover);
+  background: var(--navy-elevated);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.08), inset 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* ── Textarea ── */
+.ps-textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.6;
+}
+
+/* ── Two-col row ── */
+.ps-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* ── Select arrow ── */
+.ps-select-wrap {
+  position: relative;
+}
+
+.ps-select-wrap::after {
+  content: '›';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  color: var(--gold);
+  font-size: 18px;
+  pointer-events: none;
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.ps-select {
+  cursor: pointer;
+}
+
+.ps-select option {
+  background: var(--navy-mid);
+  color: var(--text-primary);
+}
+
+/* ── Submit button ── */
+.ps-submit {
+  margin-top: 8px;
+  padding: 15px 32px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 3px;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition:
+    background 0.3s ease,
+    color      0.3s ease,
+    box-shadow 0.3s ease,
+    transform  0.2s ease;
+  animation: fieldReveal 0.45s var(--transition) 0.40s both;
+}
+
+.ps-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--gold) 0%, #a8883a 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ps-submit:hover:not(:disabled) {
+  color: var(--navy-deep);
+  box-shadow: 0 6px 28px rgba(201,168,76,0.3);
+  transform: translateY(-1px);
+}
+
+.ps-submit:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.ps-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.ps-submit:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: var(--text-muted);
+  color: var(--text-muted);
+}
+
+.ps-submit span {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Message ── */
+.ps-message {
+  padding: 12px 16px;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  animation: fieldReveal 0.3s var(--transition) both;
+}
+
+.ps-message--info    { background: var(--gold-dim);    border: 1px solid var(--gold-border); color: var(--gold-light); }
+.ps-message--error   { background: var(--error-dim);   border: 1px solid rgba(224,112,112,0.3); color: var(--error); }
+.ps-message--success { background: var(--success-dim); border: 1px solid rgba(110,196,160,0.3); color: var(--success); }
+
+/* ── Responsive ── */
+@media (max-width: 520px) {
+  .ps-card-header,
+  .ps-form { padding-left: 24px; padding-right: 24px; }
+
+  .ps-row { grid-template-columns: 1fr; }
+
+  .ps-title { font-size: 26px; }
+}

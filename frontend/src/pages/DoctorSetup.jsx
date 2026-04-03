@@ -1,19 +1,19 @@
 import { useState } from "react";
 import AuthLayout from "../components/AuthLayout";
-import "../index.css";
+import "../styles/DoctorSetup.css";
 import { useNavigate } from "react-router-dom";
 
 export default function DoctorSetup() {
   const navigate = useNavigate();
-  const userId = localStorage.getItem("userId");
+  const userId   = localStorage.getItem("userId");
   const userEmail = localStorage.getItem("userEmail"); // optional, just for display
 
   const [doctorData, setDoctorData] = useState({
-    licenseNumber: "",
-    degrees: "",
+    licenseNumber:   "",
+    degrees:         "",
     experienceYears: "",
-    deptId: "",
-    branchId: "",
+    deptId:          "",
+    branchId:        "",
   });
 
   const [message, setMessage] = useState("");
@@ -22,6 +22,16 @@ export default function DoctorSetup() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setDoctorData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // helper: classify message type for styling
+  const messageType = () => {
+    if (!message) return "";
+    if (message.toLowerCase().includes("error") || message.toLowerCase().includes("please fill"))
+      return "ds-message--error";
+    if (message.toLowerCase().includes("success"))
+      return "ds-message--success";
+    return "ds-message--info";
   };
 
   // submit profile only (Step 1)
@@ -35,9 +45,9 @@ export default function DoctorSetup() {
 
     if (
       !doctorData.licenseNumber ||
-      !doctorData.degrees ||
+      !doctorData.degrees        ||
       !doctorData.experienceYears ||
-      !doctorData.deptId ||
+      !doctorData.deptId         ||
       !doctorData.branchId
     ) {
       setMessage("Please fill all required fields!");
@@ -48,16 +58,16 @@ export default function DoctorSetup() {
 
     try {
       const res = await fetch("http://localhost:3000/api/doctor/profile/create", {
-        method: "POST",
+        method:  "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId,
-          email: userEmail,
-          licenseNumber: doctorData.licenseNumber,
-          degrees: doctorData.degrees,
+          email:           userEmail,
+          licenseNumber:   doctorData.licenseNumber,
+          degrees:         doctorData.degrees,
           experienceYears: Number(doctorData.experienceYears),
-          deptId: Number(doctorData.deptId),
-          branchId: Number(doctorData.branchId),
+          deptId:          Number(doctorData.deptId),
+          branchId:        Number(doctorData.branchId),
         }),
       });
 
@@ -75,73 +85,101 @@ export default function DoctorSetup() {
   };
 
   return (
-    <AuthLayout title={`Doctor Setup (${userEmail || "Doctor"})`}>
-      <form onSubmit={handleSubmit} className="setup-form">
-        <div className="form-group">
-          <label>License Number</label>
-          <input
-            type="text"
-            name="licenseNumber"
-            value={doctorData.licenseNumber}
-            onChange={handleInputChange}
-            className="input-field"
-            required
-          />
-        </div>
+    <AuthLayout>
+      <div className="ds-page">
+        <div className="ds-card">
 
-        <div className="form-group">
-          <label>Degrees</label>
-          <input
-            type="text"
-            name="degrees"
-            value={doctorData.degrees}
-            onChange={handleInputChange}
-            className="input-field"
-            required
-          />
-        </div>
+          {/* ── Header ── */}
+          <div className="ds-card-header">
+            <span className="ds-eyebrow">Physician Portal</span>
+            <h2 className="ds-title">Doctor <em>Setup</em></h2>
+            <p className="ds-subtitle">{userEmail || "Complete your professional profile"}</p>
+          </div>
 
-        <div className="form-group">
-          <label>Years of Experience</label>
-          <input
-            type="number"
-            name="experienceYears"
-            value={doctorData.experienceYears}
-            onChange={handleInputChange}
-            className="input-field"
-            required
-          />
-        </div>
+          {/* ── Form ── */}
+          <form onSubmit={handleSubmit} className="ds-form">
 
-        <div className="form-group">
-          <label>Department ID</label>
-          <input
-            type="number"
-            name="deptId"
-            value={doctorData.deptId}
-            onChange={handleInputChange}
-            className="input-field"
-            required
-          />
-        </div>
+            {/* License Number */}
+            <div className="ds-field">
+              <label className="ds-label">License Number</label>
+              <input
+                type="text"
+                name="licenseNumber"
+                value={doctorData.licenseNumber}
+                onChange={handleInputChange}
+                className="ds-input"
+                required
+              />
+            </div>
 
-        <div className="form-group">
-          <label>Branch ID</label>
-          <input
-            type="number"
-            name="branchId"
-            value={doctorData.branchId}
-            onChange={handleInputChange}
-            className="input-field"
-            required
-          />
-        </div>
+            {/* Degrees */}
+            <div className="ds-field">
+              <label className="ds-label">Degrees</label>
+              <input
+                type="text"
+                name="degrees"
+                placeholder="e.g. MBBS, MD"
+                value={doctorData.degrees}
+                onChange={handleInputChange}
+                className="ds-input"
+                required
+              />
+            </div>
 
-        <button type="submit" className="submit-btn">
-          Save Profile
-        </button>
-        {message && <p className="message">{message}</p>}
-      </form>
+            {/* Experience */}
+            <div className="ds-field">
+              <label className="ds-label">Years of Experience</label>
+              <input
+                type="number"
+                name="experienceYears"
+                min="0"
+                value={doctorData.experienceYears}
+                onChange={handleInputChange}
+                className="ds-input"
+                required
+              />
+            </div>
+
+            {/* Dept + Branch side by side */}
+            <div className="ds-row">
+              <div className="ds-field">
+                <label className="ds-label">Department ID</label>
+                <input
+                  type="number"
+                  name="deptId"
+                  value={doctorData.deptId}
+                  onChange={handleInputChange}
+                  className="ds-input"
+                  required
+                />
+              </div>
+
+              <div className="ds-field">
+                <label className="ds-label">Branch ID</label>
+                <input
+                  type="number"
+                  name="branchId"
+                  value={doctorData.branchId}
+                  onChange={handleInputChange}
+                  className="ds-input"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Submit */}
+            <button type="submit" className="ds-submit">
+              <span>Save Profile</span>
+            </button>
+
+            {/* Feedback message */}
+            {message && (
+              <p className={`ds-message ${messageType()}`}>{message}</p>
+            )}
+
+          </form>
+        </div>
+      </div>
     </AuthLayout>
   );
 }
