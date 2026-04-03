@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "../components/AuthLayout";
+import "../styles/Login.css"; // See the CSS below
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -14,12 +15,10 @@ export default function Login() {
       setMessage("Please enter email and password");
       return;
     }
-
     setLoading(true);
     setMessage("");
 
     try {
-      // 1️⃣ Send login request
       const res = await fetch("http://localhost:3000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -35,24 +34,16 @@ export default function Login() {
       }
 
       const { role } = data.user;
-
-      // 2️⃣ Save essential info in localStorage
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("userEmail", data.user.email);
       localStorage.setItem("userRole", role);
 
-      // 3️⃣ Redirect based on role (case-insensitive)
       const userRole = role.toUpperCase();
       
-      if (userRole === "DOCTOR") {
-        navigate("/doctor/dashboard");
-      } else if (userRole === "PATIENT") {
-        navigate("/patient/dashboard");
-      } else if (userRole === "ADMIN") {
-        navigate("/admin/dashboard");
-      } else {
-        setMessage("Unknown role: " + role);
-      }
+      if (userRole === "DOCTOR") navigate("/doctor/dashboard");
+      else if (userRole === "PATIENT") navigate("/patient/dashboard");
+      else if (userRole === "ADMIN") navigate("/admin/dashboard");
+      else setMessage("Unknown role: " + role);
 
     } catch (err) {
       console.error(err);
@@ -63,32 +54,46 @@ export default function Login() {
   };
 
   return (
-    <AuthLayout title="LOGIN">
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="input-field"
-      />
+    <AuthLayout title="Welcome Back">
+      <div className="login-container">
+        <p className="login-subtitle">Enter your credentials to access your portal</p>
+        
+        <div className="input-group">
+          <label className="input-label">Email Address</label>
+          <input
+            type="email"
+            placeholder="name@healthcare.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="premium-input"
+          />
+        </div>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="input-field"
-      />
+        <div className="input-group">
+          <label className="input-label">Password</label>
+          <input
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="premium-input"
+          />
+        </div>
 
-      <button
-        className="submit-btn"
-        onClick={handleLogin}
-        disabled={loading}
-      >
-        {loading ? "Logging in..." : "LOGIN"}
-      </button>
+        <button
+          className={`premium-button ${loading ? "loading" : ""}`}
+          onClick={handleLogin}
+          disabled={loading}
+        >
+          {loading ? <span className="spinner"></span> : "Sign In"}
+        </button>
 
-      {message && <p className="message">{message}</p>}
+        {message && (
+          <div className={`status-message ${message.includes('❌') || !message.includes('success') ? 'error' : 'success'}`}>
+            {message}
+          </div>
+        )}
+      </div>
     </AuthLayout>
   );
 }

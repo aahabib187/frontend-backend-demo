@@ -1,10 +1,10 @@
 import { useState } from "react";
 import AuthLayout from "../components/AuthLayout";
-import { useNavigate } from "react-router-dom"; 
-import "../index.css";
+import { useNavigate } from "react-router-dom";
+import "../styles/TimeSlots.css";
 
 export default function DoctorTimeSlots() {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const email = localStorage.getItem("userEmail");
 
   const [currentSlot, setCurrentSlot] = useState({
@@ -18,16 +18,13 @@ export default function DoctorTimeSlots() {
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    setCurrentSlot({
-      ...currentSlot,
-      [e.target.name]: e.target.value,
-    });
+    setCurrentSlot({ ...currentSlot, [e.target.name]: e.target.value });
   };
 
   const addSlot = () => {
     const { dayOfWeek, startTime, endTime, interval } = currentSlot;
     if (!dayOfWeek || !startTime || !endTime || !interval) {
-      setMessage("❌ Fill all fields before adding a slot");
+      setMessage("Fill all fields before adding a slot.");
       return;
     }
     setTimeSlots([...timeSlots, currentSlot]);
@@ -35,17 +32,14 @@ export default function DoctorTimeSlots() {
     setMessage("");
   };
 
-  // ✅ Remove slot by index
   const removeSlot = (index) => {
-    const newSlots = timeSlots.filter((_, idx) => idx !== index);
-    setTimeSlots(newSlots);
+    setTimeSlots(timeSlots.filter((_, idx) => idx !== index));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (timeSlots.length === 0) {
-      setMessage("❌ Add at least one time slot before saving");
+      setMessage("Add at least one time slot before saving.");
       return;
     }
 
@@ -56,116 +50,119 @@ export default function DoctorTimeSlots() {
         body: JSON.stringify({ email, timeSlots }),
       });
 
-      const data = await res.json();
       if (res.ok) {
-        setMessage("✅ All time slots saved successfully");
-        setTimeSlots([]);
-          navigate("/doctor/dashboard");
+        setMessage("Availability saved successfully.");
+        setTimeout(() => navigate("/doctor/dashboard"), 1500);
       } else {
-        setMessage(data.error || "❌ Failed to save");
+        const data = await res.json();
+        setMessage(data.error || "Failed to save. Please try again.");
       }
     } catch {
-      setMessage("❌ Server error");
+      setMessage("Server error. Please try again later.");
     }
   };
 
   return (
-    <AuthLayout title="Set Your Availability">
-      <form onSubmit={handleSubmit} className="timeslot-form">
+    <AuthLayout title="Schedule Manager">
+      <div className="exclusive-container">
+        <p className="exclusive-subtitle">Define your professional consulting hours</p>
 
-        {/* DAY */}
-        <label className="form-label">Day</label>
-        <select
-          name="dayOfWeek"
-          className="input-field"
-          value={currentSlot.dayOfWeek}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select working day</option>
-          <option>Sunday</option>
-          <option>Monday</option>
-          <option>Tuesday</option>
-          <option>Wednesday</option>
-          <option>Thursday</option>
-          <option>Friday</option>
-          <option>Saturday</option>
-        </select>
+        <div className="scheduler-grid">
 
-        {/* TIME ROW */}
-        <div className="time-row">
-          <div>
-            <label className="form-label">Start Time</label>
-            <input
-              type="time"
-              name="startTime"
-              className="input-field"
-              value={currentSlot.startTime}
-              onChange={handleChange}
-              required
-            />
+          {/* ── Left: Input Form ── */}
+          <div className="glass-form-card">
+            <div className="input-group">
+              <label className="premium-label">Working Day</label>
+              <select
+                name="dayOfWeek"
+                className="premium-select"
+                value={currentSlot.dayOfWeek}
+                onChange={handleChange}
+              >
+                <option value="">Select a day</option>
+                {["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].map(day => (
+                  <option key={day}>{day}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="time-range-row">
+              <div className="input-group">
+                <label className="premium-label">Start</label>
+                <input
+                  type="time"
+                  name="startTime"
+                  className="premium-input-time"
+                  value={currentSlot.startTime}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="input-group">
+                <label className="premium-label">End</label>
+                <input
+                  type="time"
+                  name="endTime"
+                  className="premium-input-time"
+                  value={currentSlot.endTime}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="input-group">
+              <label className="premium-label">Session Duration (min)</label>
+              <input
+                type="number"
+                name="interval"
+                className="premium-input-time"
+                value={currentSlot.interval}
+                onChange={handleChange}
+                min="5"
+                step="5"
+              />
+            </div>
+
+            <button type="button" onClick={addSlot} className="add-entry-btn">
+              <span>+</span> Add to Schedule
+            </button>
           </div>
 
-          <div>
-            <label className="form-label">End Time</label>
-            <input
-              type="time"
-              name="endTime"
-              className="input-field"
-              value={currentSlot.endTime}
-              onChange={handleChange}
-              required
-            />
+          {/* ── Right: Live Slot Preview ── */}
+          <div className="slots-preview-area">
+            <h4 className="preview-title">
+              Current Itinerary
+              <span className="slot-count">{timeSlots.length} slots</span>
+            </h4>
+
+            <div className="slots-scroll-container">
+              {timeSlots.length === 0 ? (
+                <div className="empty-state">No slots added yet</div>
+              ) : (
+                timeSlots.map((slot, idx) => (
+                  <div className="slot-pill" key={idx}>
+                    <div className="slot-info">
+                      <span className="slot-day">{slot.dayOfWeek}</span>
+                      <span className="slot-time">{slot.startTime} — {slot.endTime}</span>
+                      <span className="slot-duration">{slot.interval}m</span>
+                    </div>
+                    <button onClick={() => removeSlot(idx)} className="delete-pill">✕</button>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
+
         </div>
 
-        {/* INTERVAL */}
-        <label className="form-label">Appointment Interval (minutes)</label>
-        <input
-          type="number"
-          name="interval"
-          className="input-field"
-          value={currentSlot.interval}
-          onChange={handleChange}
-          min="5"
-          step="5"
-          required
-        />
+        {/* ── Footer ── */}
+        <div className="action-footer">
+          {message && <p className="status-msg-popup">{message}</p>}
+          <button onClick={handleSubmit} className="save-all-btn">
+            <span>Finalize Availability</span>
+          </button>
+        </div>
 
-        {/* Add Slot Button */}
-        <button type="button" onClick={addSlot} className="add-slot-btn">
-          ➕ Add Slot
-        </button>
-
-        {/* Show Added Slots */}
-        {timeSlots.length > 0 && (
-          <div className="added-slots">
-            <h4>Added Slots:</h4>
-            <ul>
-              {timeSlots.map((slot, idx) => (
-                <li key={idx}>
-                  {slot.dayOfWeek}: {slot.startTime} - {slot.endTime} ({slot.interval} min)
-                  <button
-                    type="button"
-                    onClick={() => removeSlot(idx)}
-                    className="remove-slot-btn"
-                    style={{ marginLeft: "10px", color: "red" }}
-                  >
-                    ❌ Remove
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Submit all slots */}
-        <button type="submit" className="submit-btn">
-          Save All Slots
-        </button>
-
-        {message && <p className="message">{message}</p>}
-      </form>
+      </div>
     </AuthLayout>
   );
 }
