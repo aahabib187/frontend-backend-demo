@@ -54,6 +54,7 @@ router.post("/timeslots/save", saveDoctorTimeSlots);
 const doctorUpcoming = require("../controllers/doctorUpcoming"); 
 // GET — Fetch appointments for a doctor by email
 router.get("/schedule/:doctorId", doctorUpcoming.getDoctorSchedule);
+router.patch("/appointment/:appointmentId/done",doctorUpcoming.markAppointmentDone);
 
 console.log("Is controller defined?", doctorUpcoming.getDoctorSchedule);
 

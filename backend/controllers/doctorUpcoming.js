@@ -15,6 +15,18 @@ exports.getDoctorSchedule = async (req, res) => {
   try {
     connection = await connectDB();
 
+        // 🔹 Auto-cancel past appointments
+    await connection.execute(
+      `UPDATE DOCTORS_APPOINTMENTS
+       SET STATUS = 'CANCELED'
+       WHERE DOCTOR_ID = :doctorId
+         AND STATUS = 'BOOKED'
+         AND APPOINTMENT_DATE < SYSDATE`,
+      { doctorId: idToUse },
+      { autoCommit: true }
+    );
+
+    // 🔹 Fetch upcoming appointments
     const result = await connection.execute(
       `SELECT 
          a.ID AS APPOINTMENT_ID,
@@ -44,3 +56,36 @@ exports.getDoctorSchedule = async (req, res) => {
     if (connection) await connection.close();
   }
 };
+
+exports.markAppointmentDone = async (req, res) => {
+  const { appointmentId } = req.params;
+
+  const idToUse = parseInt(appointmentId, 10);
+  if (isNaN(idToUse)) {
+    return res.status(400).json({ error: "Invalid appointment ID" });
+  }
+
+  let connection;
+  try {
+    connection = await connectDB();
+
+    await connection.execute(
+      `UPDATE DOCTORS_APPOINTMENTS
+       SET STATUS = 'COMPLETED'
+       WHERE ID = :id`,
+      { id: idToUse },
+      { autoCommit: true }
+    );
+
+    return res.status(200).json({
+      message: "✅ Appointment marked as completed",
+    });
+
+  } catch (err) {
+    console.error("Mark done error:", err);
+    return res.status(500).json({ error: "Failed to update appointment" });
+  } finally {
+    if (connection) await connection.close();
+  }
+};
+

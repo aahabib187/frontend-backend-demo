@@ -53,3 +53,6 @@ app.listen(PORT, () => {
 //Appointment Routes
 const appointmentRoutes = require("./routes/appointmentRoutes");
 app.use("/api", appointmentRoutes);
+
+// Start cron jobs
+require("./cron/autoCancelAppointments"); // runs in the background
