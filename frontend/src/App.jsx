@@ -15,8 +15,11 @@ import DoctorTimeSlots from "./pages/DoctorTimeSlots";
 import MedicineManagement from "./pages/MedicineManagement";
 import LabTestManagement from "./pages/LabTestManagement";
 import BedManagement from "./pages/BedManagement";
-import UpcomingAppointments from "./pages/UpcomingAppointment"; 
+import UpcomingAppointments from "./pages/UpcomingAppointment";
 import DoctorSchedule from "./pages/DoctorSchedule"; // Correct
+import CreatePrescription from "./pages/CreatePrescription"; // adjust path
+import ViewPrescription from "./pages/ViewPrescription"; // adjust path if needed
+import PatientHistory from "./pages/PatientHistory"; // or correct path
 
 function App() {
   return (
@@ -28,7 +31,7 @@ function App() {
         {/* DASHBOARDS */}
         <Route path="/patient/dashboard" element={<PatientDashboard />} />
         <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
-  <Route path="/patient/upcoming" element={<UpcomingAppointments />} />
+        <Route path="/patient/upcoming" element={<UpcomingAppointments />} />
         <Route path="/doctor/setup" element={<DoctorSetup />} />
         <Route path="/patient/setup" element={<PatientSetup />} />
         <Route path="/patient/book" element={<PatientBookAppointment />} />
@@ -37,12 +40,16 @@ function App() {
         <Route path="/doctor/timeslots" element={<DoctorTimeSlots />} />
         <Route path="/patient/appointment/doctor/:doctorId" element={<AppointmentDoctorDetail />} />
         <Route path="/doctor/schedule" element={<DoctorSchedule />} />
-<Route path="/doctor/schedule/:doctorId" element={<DoctorSchedule />} />
+        <Route path="/doctor/schedule/:doctorId" element={<DoctorSchedule />} />
+        <Route path="/doctor/prescription/:appointmentId" element={<CreatePrescription />} />
+        <Route path="/doctor/prescription-view/:appointmentId" element={<ViewPrescription />} />
+        <Route path="/doctor/patient-history/:doctorId" element={<PatientHistory />} />
+
         {/* Admin Management Routes */}
         <Route path="/admin/medicines" element={<MedicineManagement />} />
         <Route path="/admin/lab-tests" element={<LabTestManagement />} />
         <Route path="/admin/beds" element={<BedManagement />} />
-        
+
         {/* DEFAULT */}
         <Route path="*" element={<Signup />} />
       </Routes>

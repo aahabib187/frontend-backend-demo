@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import defaultImg from "../assets/default.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useParams } from "react-router-dom";
 import "../styles/DoctorDashboard.css";
 
 function getInitials(name = "") {
@@ -70,6 +70,7 @@ export default function DoctorDashboard() {
   const [doctor, setDoctor] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+const { doctorId } = useParams();
 
   useEffect(() => {
     const fetchDoctor = async () => {
@@ -168,7 +169,7 @@ export default function DoctorDashboard() {
 
           <div className="dd-nav-section" style={{ padding: "1.25rem 0.75rem 0.4rem" }}>Records</div>
 
-          <button className="dd-nav-btn">
+          <button className="dd-nav-btn"  onClick={() =>{ console.log("Navigating..."); navigate(`/doctor/patient-history/${doctor.id}`)}}>
             <IconFile /> Patient Records
           </button>
         </nav>
