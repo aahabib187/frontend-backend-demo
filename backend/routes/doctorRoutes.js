@@ -58,5 +58,17 @@ router.patch("/appointment/:appointmentId/done",doctorUpcoming.markAppointmentDo
 
 console.log("Is controller defined?", doctorUpcoming.getDoctorSchedule);
 
+//prescription routes
+const doctorPrescription =require("../controllers/doctorPrescription");
+
+// EDIT prescription
+router.post("/prescription/:appointmentId",doctorPrescription.createPrescription);
+// VIEW prescription (read-only)
+router.get("/prescription/:appointmentId", doctorPrescription.getPrescription);
+
+// Patient history (all past appointments)
+const { createPrescription, getPrescription, getDoctorHistory } = require("../controllers/doctorPrescription");
+router.get("/history/:doctorId", getDoctorHistory);
+
 
 module.exports = router;
