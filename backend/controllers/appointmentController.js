@@ -124,28 +124,17 @@ exports.bookAppointment = async (req, res) => {
     }
 
     await connection.execute(
-      `INSERT INTO DOCTORS_APPOINTMENTS
-        (PATIENT_ID, DOCTOR_ID, APPOINTMENT_DATE, TIME_SLOT_ID, STATUS, TYPE)
-       VALUES
-        (:patientId, :doctorId, TO_DATE(:appointmentDate, 'YYYY-MM-DD'), :timeSlotId, :status, :type)`,
+      `BEGIN
+         proc_book_appointment(:patientId, :doctorId, TO_DATE(:appointmentDate, 'YYYY-MM-DD'), :timeSlotId, :type);
+       END;`,
       {
         patientId,
         doctorId,
         appointmentDate,
         timeSlotId,
-        status: "BOOKED",
         type: type || "General"
       }
     );
-    // Update the time slot status to BOOKED
-await connection.execute(
-  `UPDATE TIME_SLOTS
-     SET STATUS = 'BOOKED',
-         LAST_EDITED_AT = SYSDATE
-   WHERE ID = :timeSlotId
-     AND DOCTOR_ID = :doctorId`,
-  { timeSlotId, doctorId }
-);
 
     await connection.commit();
 
