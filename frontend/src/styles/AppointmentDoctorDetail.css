@@ -9,6 +9,7 @@
 /* ── ROOT ─────────────────────────────────────── */
 .add-root {
   display: flex;
+  width: 100%;
   min-height: 100vh;
   background: #0b0c0f;
   color: #e8e2d5;
