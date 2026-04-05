@@ -51,19 +51,27 @@ export default function PatientDashboard() {
   useEffect(() => {
     const fetchPatient = async () => {
       const email = localStorage.getItem("userEmail");
-      const userId = localStorage.getItem("userId");
+      const role = localStorage.getItem("userRole");
 
-      if (!email && !userId) {
-        setLoading(false);
+      if (!email || role?.toUpperCase() !== "PATIENT") {
+        navigate("/login");
         return;
       }
 
       try {
-        const res = await fetch(`http://localhost:3000/api/patient/profile/${email}`);
+        const res = await fetch(`http://localhost:3000/api/patient/profile/${encodeURIComponent(email)}`);
         if (!res.ok) throw new Error("Profile not found");
 
         const data = await res.json();
+        console.log("RAW API RESPONSE:", data);
+
+        // Save patientId to localStorage as a reliable fallback
+        if (data.id) {
+          localStorage.setItem("patientId", String(data.id));
+        }
+
         setPatient({
+          id: String(data.id),
           name: data.name || "N/A",
           email: data.email || email || "N/A",
           dateOfBirth: data.dateOfBirth || "N/A",
@@ -136,7 +144,13 @@ export default function PatientDashboard() {
             <BookIcon />
             Book Appointment
           </button>
-          <button className="pd-nav-btn">
+          <button
+            className="pd-nav-btn"
+            onClick={() => {
+              const id = patient?.id || localStorage.getItem("patientId");
+              navigate(`/patient/history/${id}`);
+            }}
+          >
             <RxIcon />
             Prescriptions
           </button>

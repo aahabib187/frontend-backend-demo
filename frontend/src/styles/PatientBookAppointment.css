@@ -23,8 +23,9 @@
   justify-content: center;
   min-height: 100vh;
   background: #0b0c0f;
+  font-family: 'Jost', sans-serif;
   font-size: 11px;
-  letter-spacing: 0.35em;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   color: rgba(196, 163, 100, 0.5);
 }
@@ -156,39 +157,21 @@
 }
 
 .pba-header {
-  padding: 48px 0 32px;
-  border-bottom: 1px solid rgba(196, 163, 100, 0.15); /* Slightly stronger luxury gold border */
-  margin-bottom: 40px;
+  padding: 44px 0 24px;
+  border-bottom: 1px solid rgba(196, 163, 100, 0.12);
+  margin-bottom: 30px;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  /* subtle glass effect */
-  background: linear-gradient(to right, rgba(196, 163, 100, 0.02), transparent);
-}
-
-.pba-header-left {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 }
 
 .pba-header-label {
-  font-size: 11px; /* Increased slightly for elite readability */
-  font-weight: 700;
-  letter-spacing: 0.4em; /* Ultra-wide spacing for that "high-fashion" feel */
+  font-size: 10px;
+  letter-spacing: 0.35em;
   text-transform: uppercase;
-  color: #c4a364; /* Signature Luxury Gold */
-  margin-bottom: 4px;
-  opacity: 0.9;
+  color: #c4a364;
+  margin-bottom: 8px;
 }
-
-/* Optional: Add a subtle glow to the label to make it "pop" on dark backgrounds */
-.pba-header-label:hover {
-  color: #d4b884;
-  text-shadow: 0 0 12px rgba(196, 163, 100, 0.3);
-  transition: all 0.4s ease;
-}
-
 
 .pba-header-title {
   font-family: 'Cormorant Garamond', serif;
@@ -203,81 +186,86 @@
 .pba-filter-bar {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 36px;
+  gap: 16px;
+  margin-bottom: 40px;
+  background: #0e0f13;
+  padding: 16px 24px;
+  border: 1px solid rgba(196, 163, 100, 0.15);
+  border-radius: 2px;
 }
 
 .pba-filter-label {
-  font-size: 9px;
-  letter-spacing: 0.3em;
+  font-size: 10px;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: rgba(196, 163, 100, 0.55);
-  white-space: nowrap;
+  color: rgba(232, 226, 213, 0.5);
 }
 
 .pba-filter-select {
   all: unset;
-  background: #0e0f13;
+  background: rgba(196, 163, 100, 0.04);
   border: 1px solid rgba(196, 163, 100, 0.2);
-  border-radius: 2px;
-  padding: 10px 16px;
+  color: #e8e2d5;
   font-family: 'Jost', sans-serif;
   font-size: 13px;
-  font-weight: 300;
-  color: #e8e2d5;
-  letter-spacing: 0.04em;
+  padding: 8px 16px;
+  border-radius: 2px;
   cursor: pointer;
-  min-width: 220px;
+  min-width: 200px;
   transition: border-color 0.2s;
 }
 
-.pba-filter-select:hover,
-.pba-filter-select:focus {
-  border-color: rgba(196, 163, 100, 0.5);
-  outline: none;
+.pba-filter-select:focus,
+.pba-filter-select:hover {
+  border-color: #c4a364;
+}
+
+.pba-filter-select option {
+  background: #0e0f13;
+  color: #e8e2d5;
 }
 
 .pba-filter-divider {
-  flex: 1;
-  height: 1px;
-  background: rgba(196, 163, 100, 0.08);
+  height: 24px;
+  width: 1px;
+  background: rgba(196, 163, 100, 0.2);
+  margin: 0 8px;
 }
 
 .pba-results-count {
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: rgba(196, 163, 100, 0.45);
-  white-space: nowrap;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  color: #c4a364;
+  font-style: italic;
 }
 
 /* ── DOCTOR GRID ─────────────────────────────── */
 .pba-doctor-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
 }
 
 .pba-empty {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 20px;
-  font-weight: 300;
-  color: rgba(232, 226, 213, 0.25);
-  padding: 60px 0;
-  text-align: center;
   grid-column: 1 / -1;
-  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  color: rgba(232, 226, 213, 0.4);
 }
 
-/* ── DOCTOR CARD ─────────────────────────────── */
 .pba-doctor-card {
   background: #0e0f13;
-  border: 1px solid rgba(196, 163, 100, 0.12);
+  border: 1px solid rgba(196, 163, 100, 0.15);
   border-radius: 2px;
   padding: 28px;
   cursor: pointer;
-  transition: border-color 0.22s ease, background 0.22s ease;
   position: relative;
+  transition: all 0.3s ease;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .pba-doctor-card::before {
@@ -286,75 +274,77 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(196, 163, 100, 0), transparent);
-  transition: background 0.3s ease;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #c4a364, transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .pba-doctor-card:hover {
-  border-color: rgba(196, 163, 100, 0.35);
-  background: #101117;
+  transform: translateY(-4px);
+  border-color: rgba(196, 163, 100, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .pba-doctor-card:hover::before {
-  background: linear-gradient(90deg, transparent, #c4a364, transparent);
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .pba-card-top {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   margin-bottom: 20px;
 }
 
 .pba-avatar-wrap {
   position: relative;
+  width: 64px;
+  height: 64px;
   flex-shrink: 0;
 }
 
 .pba-avatar {
-  width: 56px;
-  height: 56px;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(196, 163, 100, 0.25);
+  border: 1px solid rgba(196, 163, 100, 0.3);
 }
 
 .pba-avatar-ring {
   position: absolute;
-  inset: -3px;
+  inset: -4px;
   border-radius: 50%;
-  border: 1px solid rgba(196, 163, 100, 0.1);
+  border: 1px solid rgba(196, 163, 100, 0.12);
 }
 
 .pba-doctor-name {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 400;
   color: #e8e2d5;
-  letter-spacing: 0.02em;
+  line-height: 1.2;
   margin-bottom: 4px;
 }
 
 .pba-doctor-degrees {
   font-size: 11px;
-  letter-spacing: 0.06em;
-  color: rgba(232, 226, 213, 0.4);
+  color: rgba(196, 163, 100, 0.8);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .pba-card-divider {
   height: 1px;
-  background: rgba(196, 163, 100, 0.08);
-  margin-bottom: 16px;
+  background: rgba(196, 163, 100, 0.1);
+  margin: 0 0 20px 0;
 }
 
 .pba-doctor-exp {
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(196, 163, 100, 0.55);
-  margin-bottom: 14px;
+  font-size: 13px;
+  color: rgba(232, 226, 213, 0.6);
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -362,45 +352,43 @@
 
 .pba-doctor-exp::before {
   content: '';
-  display: inline-block;
-  width: 14px;
-  height: 1px;
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
   background: #c4a364;
-  opacity: 0.4;
 }
 
 .pba-specialties {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex: 1;
 }
 
 .pba-badge {
-  font-size: 9px;
-  letter-spacing: 0.18em;
+  font-size: 10px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(196, 163, 100, 0.7);
+  color: #e8e2d5;
+  background: rgba(196, 163, 100, 0.1);
   border: 1px solid rgba(196, 163, 100, 0.2);
   padding: 4px 10px;
-  border-radius: 1px;
-  transition: all 0.2s;
-}
-
-.pba-doctor-card:hover .pba-badge {
-  border-color: rgba(196, 163, 100, 0.4);
-  color: #c4a364;
+  border-radius: 20px;
 }
 
 .pba-card-arrow {
   position: absolute;
-  bottom: 20px;
-  right: 22px;
+  bottom: 28px;
+  right: 28px;
+  color: #c4a364;
   font-size: 16px;
-  color: rgba(196, 163, 100, 0.2);
-  transition: color 0.2s, transform 0.2s;
+  opacity: 0.4;
+  transition: all 0.3s;
 }
 
 .pba-doctor-card:hover .pba-card-arrow {
-  color: #c4a364;
-  transform: translateX(3px);
+  opacity: 1;
+  transform: translateX(4px);
 }

@@ -1,6 +1,4 @@
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PatientDashboard from "./pages/PatientDashboard";
@@ -16,10 +14,10 @@ import MedicineManagement from "./pages/MedicineManagement";
 import LabTestManagement from "./pages/LabTestManagement";
 import BedManagement from "./pages/BedManagement";
 import UpcomingAppointments from "./pages/UpcomingAppointment";
-import DoctorSchedule from "./pages/DoctorSchedule"; // Correct
-import CreatePrescription from "./pages/CreatePrescription"; // adjust path
-import ViewPrescription from "./pages/ViewPrescription"; // adjust path if needed
-import PatientHistory from "./pages/PatientHistory"; // or correct path
+import DoctorSchedule from "./pages/DoctorSchedule";
+import CreatePrescription from "./pages/CreatePrescription";
+import ViewPrescription from "./pages/ViewPrescription";
+import PatientHistory from "./pages/PatientHistory";
 
 function App() {
   return (
@@ -49,6 +47,11 @@ function App() {
         <Route path="/admin/medicines" element={<MedicineManagement />} />
         <Route path="/admin/lab-tests" element={<LabTestManagement />} />
         <Route path="/admin/beds" element={<BedManagement />} />
+
+        {/* HISTORY & PRESCRIPTIONS */}
+        <Route path="/patient/history/:patientId" element={<PatientHistory />} />
+        <Route path="/doctor/history/:doctorId" element={<PatientHistory />} />
+        <Route path="/patient/prescription/:appointmentId" element={<ViewPrescription />} />
 
         {/* DEFAULT */}
         <Route path="*" element={<Signup />} />

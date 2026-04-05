@@ -76,9 +76,12 @@ const { doctorId } = useParams();
     const fetchDoctor = async () => {
       try {
         const email = localStorage.getItem("userEmail");
-        if (!email) { setLoading(false); return; }
-
-        const res = await fetch(`http://localhost:3000/api/doctor/profile/${email}`);
+           const role = localStorage.getItem("userRole");
+             if (!email || role?.toUpperCase() !== "DOCTOR") {
+        navigate("/login");
+        return;
+      }
+        const res = await fetch(`http://localhost:3000/api/doctor/profile/${encodeURIComponent(email)}`);
         const data = await res.json();
 
         if (res.ok) {
@@ -169,7 +172,7 @@ const { doctorId } = useParams();
 
           <div className="dd-nav-section" style={{ padding: "1.25rem 0.75rem 0.4rem" }}>Records</div>
 
-          <button className="dd-nav-btn"  onClick={() =>{ console.log("Navigating..."); navigate(`/doctor/patient-history/${doctor.id}`)}}>
+          <button className="dd-nav-btn"  onClick={() =>{ console.log("Navigating..."); navigate(`/doctor/history/${doctor.id}`)}}>
             <IconFile /> Patient Records
           </button>
         </nav>
