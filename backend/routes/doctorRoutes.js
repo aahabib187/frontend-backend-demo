@@ -67,8 +67,8 @@ router.post("/prescription/:appointmentId",doctorPrescription.createPrescription
 router.get("/prescription/:appointmentId", doctorPrescription.getPrescription);
 
 // Patient history (all past appointments)
-const { createPrescription, getPrescription, getDoctorHistory } = require("../controllers/doctorPrescription");
+const {getPatientHistory, getDoctorHistory } = require("../controllers/doctorPrescription");
 router.get("/history/:doctorId", getDoctorHistory);
 
-
+router.get("/patient/history/:patientId", getPatientHistory);
 module.exports = router;

@@ -56,3 +56,14 @@ app.use("/api", appointmentRoutes);
 
 // Start cron jobs
 require("./cron/autoCancelAppointments"); // runs in the background
+
+// ADD this require
+const patientRoutes = require('./routes/patientRoutes');
+
+// existing routes
+app.use('/api', authRoutes);
+app.use('/api/doctor', doctorRoutes);
+app.use('/api/prescriptions', prescriptionRoutes);
+
+// ADD this line
+app.use('/api/patient', patientRoutes);

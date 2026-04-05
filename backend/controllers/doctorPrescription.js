@@ -165,3 +165,46 @@ exports.getDoctorHistory = async (req, res) => {
     if (connection) await connection.close();
   }
 };
+
+exports.getPatientHistory = async (req, res) => {
+  const { patientId } = req.params;
+  let connection;
+
+  try {
+    connection = await connectDB();
+
+    const sql = `
+     SELECT
+        a.ID AS APPOINTMENT_ID,
+        u.NAME AS DOCTOR_NAME,
+        s.NAME AS SPECIALITY,  -- This gets the name from SPECIALIZATION table
+        TO_CHAR(a.APPOINTMENT_DATE, 'YYYY-MM-DD') AS APPOINTMENT_DATE,
+        t.START_TIME,
+        t.END_TIME
+      FROM DOCTORS_APPOINTMENTS a
+      JOIN TIME_SLOTS t ON a.TIME_SLOT_ID = t.ID
+      JOIN DOCTOR d ON a.DOCTOR_ID = d.ID
+      JOIN USERS u ON d.USER_ID = u.ID
+      -- Join to bridge table then to specialization name
+      LEFT JOIN DOC_SPECIALIZATION ds ON d.ID = ds.DOCTOR_ID
+      LEFT JOIN SPECIALIZATION s ON ds.SPECIALIZATION_ID = s.ID
+      WHERE a.PATIENT_ID = :patientId
+        AND UPPER(a.STATUS) = 'COMPLETED'
+      ORDER BY a.APPOINTMENT_DATE DESC
+    `;
+
+    const result = await connection.execute(
+      sql,
+      { patientId },
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+
+    res.json(result.rows);
+
+  } catch (err) {
+    console.error("Patient History Error:", err);
+    res.status(500).json({ error: "Server error", details: err.message });
+  } finally {
+    if (connection) await connection.close();
+  }
+};

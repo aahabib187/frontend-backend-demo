@@ -92,8 +92,9 @@ exports.getPatientProfile = async (req, res) => {
 
     // Joining USERS and PATIENT tables to get all info
     const sql = `
-      SELECT u.NAME, u.EMAIL, p.DATE_OF_BIRTH, p.GENDER, 
-             p.OCCUPATION, p.BLOOD_TYPE, p.MARITAL_STATUS, p.ADDRESS
+      SELECT u.ID AS USER_ID, p.ID AS PATIENT_ID, u.NAME, u.EMAIL, 
+             p.DATE_OF_BIRTH, p.GENDER, p.OCCUPATION, p.BLOOD_TYPE, 
+             p.MARITAL_STATUS, p.ADDRESS
       FROM USERS u
       JOIN PATIENT p ON u.ID = p.USER_ID
       WHERE UPPER(u.EMAIL) = UPPER(:email)
@@ -108,6 +109,7 @@ exports.getPatientProfile = async (req, res) => {
     // Send the first row back to the frontend
     const profile = result.rows[0];
     res.json({
+       id: profile.PATIENT_ID, // <--- THIS IS THE KEY PIECE
       name: profile.NAME,
       email: profile.EMAIL,
       dateOfBirth: profile.DATE_OF_BIRTH ? profile.DATE_OF_BIRTH.toISOString().split('T')[0] : "N/A",
